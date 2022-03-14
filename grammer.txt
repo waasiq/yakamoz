@@ -1,1 +1,3 @@
-#
+expr: term ((ADD | SUB) term)*
+term: factor ((MUL | DIV) factor)*
+factor: INT | FLOAT

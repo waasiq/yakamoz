@@ -1,5 +1,8 @@
+from lib2to3.pgen2 import token
 import helpers.ErrHandler as err
 import helpers.Position as pos
+
+from Parser import Parser
 
 #! Tokens and Tokenizer
 
@@ -14,13 +17,16 @@ OP_TOK_TAG = {
     '/' : 'DIV',
     '*' : 'MUL',
     '{' : 'LBRACKET',
-    '}' : 'RBRACKET'
+    '}' : 'RBRACKET',
+    '(' : 'LBRACKET',
+    ')' : 'RBRACKET'   
 }
 
 class Token:
     def __init__(self, type, value = None):
         self.type = type
         self.value = value
+    
     def __repr__(self):
         if self.value: return f'{self.value} : {self.type}'
         return f'{self.type}'
@@ -32,7 +38,7 @@ class Lexer:
     def __init__(self, fn, text):
         self.fn = fn 
         self.text = text 
-        self.pos = pos.Position(-1,0 ,-1, fn , text)
+        self.pos = pos.Position(-1, 0,-1, fn , text)
         self.currChar = None
         self.advance()
     
@@ -43,6 +49,7 @@ class Lexer:
         else:
             self.currChar = None
 
+    #* Tokenizes the amount of digits sent here to float or int
     def tokenize_num(self):
         num_str = ''
         dot_count = 0
@@ -70,7 +77,7 @@ class Lexer:
             elif self.currChar in DIGITS:
                 tokens.append(self.tokenize_num())
             elif OP_TOK_TAG.get(self.currChar) != None:
-                tokens.append(OP_TOK_TAG.get(self.currChar))
+                tokens.append(Token(OP_TOK_TAG.get(self.currChar), None)) #! Change the val later
                 self.advance()
             else:
                 pos_start = self.pos.copy()
@@ -80,10 +87,13 @@ class Lexer:
 
         return tokens, None
 
-
-
 #! Run
 def runLexer(fn, text):
     lex = Lexer(fn , text)
     tokens, error = lex.lexeme()
+    
+    if error: return None, error
+    psr = Parser(tokens)
+    psr.factor()
+
     return  tokens, error
