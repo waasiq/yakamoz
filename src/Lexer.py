@@ -2,8 +2,8 @@ import helpers.ErrHandler as err
 import helpers.Position as pos
 import Tokens as tk
 
+from Interpreter import *
 from Parser import Parser
-
 
 #! Lexer Main Class
 class Lexer:
@@ -50,7 +50,7 @@ class Lexer:
             elif self.currChar in tk.DIGITS:
                 tokens.append(self.tokenize_num())
             elif tk.OP_TOK_TAG.get(self.currChar) != None:
-                tokens.append(tk.Token(tk.OP_TOK_TAG.get(self.currChar)))
+                tokens.append(tk.Token(tk.OP_TOK_TAG.get(self.currChar), pos_start=self.pos))
                 self.advance()
             else:
                 pos_start = self.pos.copy()
@@ -68,7 +68,14 @@ def runLexer(fn, text):
     
     if error: return None, error
 
+    #* Parse returns us the AST 
+    #* ParseResult contains the node and error and the Parse is actually wrapped around
+    #* the Parse Class
     psr = Parser(tokens)
-    ast = psr.parse()
+    ast = psr.parse() 
+    if ast.error: return None, ast.error
 
-    return  ast.node, ast.error
+    intrpt = Interpreter()
+    result = intrpt.visit(ast.node)
+
+    return  result, None

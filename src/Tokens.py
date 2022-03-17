@@ -2,13 +2,16 @@
 
 DIGITS = '0123456789'
 
-TOK_INT     = 'INT'
-TOK_FLOAT   = 'FLOAT'
+TOK_INT   = 'INT'
+TOK_FLOAT = 'FLOAT'
 TOK_MUL = 'MUL'
 TOK_DIV = 'DIV'
 TOK_ADD = 'ADD'
 TOK_SUB = 'SUB'
+TOK_POW = 'POW'
 TOK_EOF = 'EOF'
+TOK_LBRACKET = 'LBRACKET'
+TOK_RBRACKET = 'RBRACKET'
 
 OP_TOK_TAG = {
     '+' : 'ADD',
@@ -18,7 +21,8 @@ OP_TOK_TAG = {
     '{' : 'LBRACKET',
     '}' : 'RBRACKET',
     '(' : 'LBRACKET',
-    ')' : 'RBRACKET'   
+    ')' : 'RBRACKET',
+    '^' : 'POW' 
 }
 
 class Token:
@@ -33,6 +37,8 @@ class Token:
 
         if pos_end:
             self.pos_end = pos_end
+
+        
 
     def __repr__(self):
         if self.value: return f'{self.value} : {self.type}'

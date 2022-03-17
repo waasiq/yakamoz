@@ -1,3 +1,7 @@
-expr: term ((ADD | SUB) term)*
-term: factor ((MUL | DIV) factor)*
-factor: INT | FLOAT
+expr  : term ((ADD | SUB) term)*
+term  : factor ((MUL | DIV) factor)*
+factor: (ADD | SUB) factor
+      : power
+power : atom (POW factor)*
+atom  : INT | FLOAT
+      : LBRACKET expr RBRACKET
