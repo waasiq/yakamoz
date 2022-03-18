@@ -4,6 +4,7 @@ import Tokens as tk
 
 from Interpreter import *
 from Parser import Parser
+from helpers.Context import Context
 
 #! Lexer Main Class
 class Lexer:
@@ -76,6 +77,7 @@ def runLexer(fn, text):
     if ast.error: return None, ast.error
 
     intrpt = Interpreter()
-    result = intrpt.visit(ast.node)
+    context = Context('<program>')
+    result = intrpt.visit(ast.node, context)
 
-    return  result, None
+    return  result.value, result.error

@@ -1,1 +1,3 @@
 .*_pycache_/
+./src/_pycache_
+./src/helpers/_pycache_
