@@ -1,10 +1,14 @@
+
+#* Helper function import
 import helpers.ErrHandler as err
 import helpers.Position as pos
+from helpers.Context import Context
 
+#* Main function import
 from Tokens import *
 from Interpreter import *
 from Parser import Parser
-from helpers.Context import Context
+from SymbolTable import *
 
 #! Lexer Main Class
 class Lexer:
@@ -43,7 +47,7 @@ class Lexer:
             return Token(TOK_FLOAT, float(num_str),pos_start, self.pos)
 
     #* Tokenize the letters 
-    def tokenize_identifier(self):
+    def tokenize_letters(self):
         id_str = ''
         pos_start = self.pos.copy()
 
@@ -51,7 +55,7 @@ class Lexer:
             id_str += self.currChar
             self.advance()
 
-        tok_type = TOK_KEYWORD  if id_str in KEYWORDS else TOK_IDENTIFIER
+        tok_type = TOK_KEYWORD if id_str in KEYWORDS else TOK_IDENTIFIER
         return Token(tok_type, id_str , pos_start, self.pos)
  
     def lexeme(self):
@@ -63,7 +67,7 @@ class Lexer:
             elif self.currChar in DIGITS:
                 tokens.append(self.tokenize_num())
             elif self.currChar in LETTERS:
-                tokens.append(self.tokenize_identifier())
+                tokens.append(self.tokenize_letters())
             elif OP_TOK_TAG.get(self.currChar) != None:
                 tokens.append(Token(OP_TOK_TAG.get(self.currChar), pos_start=self.pos))
                 self.advance()
@@ -77,21 +81,23 @@ class Lexer:
         return tokens, None
 
 #! Run
+
+global_symbol_table = SymbolTable()
+global_symbol_table.set("null", Number(0))
+
 def runLexer(fn, text):
     lex = Lexer(fn , text)
-    tokens, error = lex.lexeme()
-    
-    if error: return None, error
+    tokens, error = lex.lexeme()    
+    #print(tokens)
+    if error: return None, error   
 
-    #* Parse returns us the AST 
-    #* ParseResult contains the node and error and the Parse is actually wrapped around
-    #* the Parse Class
-    psr = Parser(tokens)
-    ast = psr.parse() 
+    psr = Parser(tokens)  
+    ast = psr.parse() #* Parser.parse returns us the AST 
     if ast.error: return None, ast.error
 
-    intrpt = Interpreter()
     context = Context('<program>')
-    result = intrpt.visit(ast.node, context)
+    context.symbol_table = global_symbol_table
+    intrpt = Interpreter()    
+    result = intrpt.visit(ast.node, context) #* ast.node -> Head node
 
     return  result.value, result.error

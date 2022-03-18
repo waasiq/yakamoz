@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 import string
 
 #! Tokens and Tokenizers
@@ -44,6 +45,9 @@ KEYWORDS = [
 ]
 
 class Token:
+    #* Example can be 
+    #* type_ = INTEGER
+    #* value = 10
     def __init__(self, type_ , value=None , pos_start=None , pos_end=None):
         self.type = type_
         self.value = value
@@ -55,6 +59,9 @@ class Token:
 
         if pos_end:
             self.pos_end = pos_end        
+
+    def matches(self, type_, value):
+        return self.type == type_ and self.value == value
 
     def __repr__(self):
         if self.value: return f'{self.value} : {self.type}'

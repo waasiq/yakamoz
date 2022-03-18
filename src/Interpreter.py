@@ -1,6 +1,14 @@
+from helpers.ErrHandler import RTError
 from helpers.Numbers import Number
 from helpers.RTResult import RTResult
 from Tokens import *
+
+
+#! Symbol table class holds the value of the variables respectively in a dict
+
+#* Implementation of visitor pattern in the Interpreter class
+#* The python implementation of ast also implements the same approach 
+#* https://docs.python.org/2.7/library/ast.html#module-ast
 
 class Interpreter:
     def visit(self,node,context):
@@ -16,7 +24,30 @@ class Interpreter:
             Number(node.token.value).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
         
-    
+    def visit_VarAccessNode(self, node, context):
+        res = RTResult()
+        varName = node.var_name_token.value
+        value = context.symbol_table.get(varName)
+
+        if not value:
+            return res.failure(RTError(
+                node.pos_start, node.pos_end,
+                'No such variable',
+                context
+            ))
+        
+        return res.success(value)
+
+    def visit_VarAssignNode(self, node , context):
+        res = RTResult()
+        varName = node.var_name_token.value
+        value = res.register(self.visit(node.value_node, context))
+
+        if res.error: return res
+
+        context.symbol_table.set(varName, value)
+        return res.success(value)
+
     def visit_BinOPNode(self, node, context):
         res = RTResult()
 

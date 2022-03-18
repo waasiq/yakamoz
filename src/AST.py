@@ -25,6 +25,7 @@ class BinOPNode:
     def __repr__(self):
         return f'({self.leftN}, {self.opToken}, {self.rightN})'
 
+#* Unary Operation Node , unary operation: ++ , -- 
 class UnaryOPNode:
     def __init__(self, opToken, node):
         self.opToken = opToken
@@ -36,3 +37,23 @@ class UnaryOPNode:
     def __repr__(self):
         return f'({self.opToken} , {self.node})'
 
+
+#* Variable Assignment and Access Nodes
+
+#* Update this  
+class VarAssignNode:
+    def __init__(self, var_name_token, value_node):
+        self.var_name_token = var_name_token
+        self.value_node     = value_node
+
+        self.pos_start  = self.var_name_token.pos_start
+        self.pos_end    = self.value_node.pos_end
+
+class VarAccessNode:
+    def __init__(self, var_name_token):
+        self.var_name_token      = var_name_token
+        self.pos_start           = self.var_name_token.pos_start
+        self.pos_end             = self.var_name_token.pos_end
+
+    def __repr__(self):
+        return f'{self.value}'

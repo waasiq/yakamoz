@@ -1,11 +1,13 @@
-expr  : term ((ADD | SUB) term)*
+expr  : KEYWORD: oyleki IDENTIFIER EQUALS expr
+      : term ((ADD | SUB) term)*
 term  : factor ((MUL | DIV) factor)*
 factor: (ADD | SUB) factor
       : power
 power : atom (POW factor)*
-atom  : INT | FLOAT
+atom  : INT | FLOAT | IDENTIFIER
       : LBRACKET expr RBRACKET
 
+^ Here expr == expression
 
 ---------------------------------------------------
 

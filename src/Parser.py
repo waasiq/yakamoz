@@ -1,27 +1,11 @@
 from helpers.ErrHandler import InvalidSyntax 
-from AST import NumberNode,BinOPNode, UnaryOPNode
 
-import Tokens as tk
+#* ParseResult contains the node and error and the Parse is actually wrapped around
+#* the Parse Class for error checking
+from helpers.ParseResult import ParseResult
 
-#! Class for parsing the result w.r.t Error Handling
-class ParseResult:
-	def __init__(self):
-		self.error = None
-		self.node = None
-
-	def register(self, res):
-		if isinstance(res, ParseResult):
-			if res.error: self.error = res.error
-			return res.node
-		return res
-
-	def success(self, node):
-		self.node = node
-		return self
-
-	def failure(self, error):
-		self.error = error
-		return self
+from AST import *
+from Tokens import *
 
 #! Parse result
 class Parser:
@@ -38,7 +22,7 @@ class Parser:
 
     def parse(self):
        res = self.expression()
-       if not res.error and self.currTok.type != tk.TOK_EOF:
+       if not res.error and self.currTok.type != TOK_EOF:
             return res.failure(InvalidSyntax(
                 self.currTok.pos_start, self.currTok.pos_end,
                 'Expected an operator '
@@ -66,13 +50,13 @@ class Parser:
         return res.success(left)
 
     def power(self):
-            return self.binaryOP(self.atom, (tk.TOK_POW), self.factor)
+            return self.binaryOP(self.atom, (TOK_POW), self.factor)
 
     def factor(self):
         res = ParseResult()
         token = self.currTok
 
-        if token.type in (tk.TOK_ADD, tk.TOK_SUB):
+        if token.type in (TOK_ADD, TOK_SUB):
             self.advance()
             factor = res.register(self.factor())
             if res.error: return res
@@ -86,15 +70,18 @@ class Parser:
         res = ParseResult()
         token = self.currTok
 
-        if token.type in (tk.TOK_INT, tk.TOK_FLOAT):
+        if token.type in (TOK_INT, TOK_FLOAT):
             #* Idea is to return correct response here
             res.register(self.advance()) 
             return NumberNode(token)
-        elif token.type == tk.TOK_LBRACKET:
+        elif token.type == TOK_IDENTIFIER:
+            res.register(self.advance())
+            return VarAccessNode(token)
+        elif token.type == TOK_LBRACKET:
             res.register(self.advance())
             expr = res.register(self.expression())
             if res.error: return res
-            if self.currTok.type == tk.TOK_RBRACKET: #* Right bracket found return expr
+            if self.currTok.type == TOK_RBRACKET: #* Right bracket found return expr
                 res.register(self.advance())
                 return res.success(expr)
             else:
@@ -112,8 +99,36 @@ class Parser:
 
     #* Term returns two number nodes as it calls factor function
     def term(self):
-        return self.binaryOP(self.factor, (tk.TOK_MUL, tk.TOK_DIV))        
+        return self.binaryOP(self.factor, (TOK_MUL, TOK_DIV))        
 
     #* Expression runs the code term and term runs the factor
-    def expression(self):        
-        return self.binaryOP(self.term, (tk.TOK_ADD, tk.TOK_SUB))  
+    def expression(self): 
+        res = ParseResult()
+
+        if self.currTok.matches(TOK_KEYWORD, 'oyleki'):
+            res.register(self.advance())
+            
+            if self.currTok.type != TOK_IDENTIFIER:
+                return res.failure(InvalidSyntax(
+                    self.currTok.pos_start, self.currTok.pos_end,
+                    'Expected an identifier'   
+                ))
+            
+            varName = self.currTok
+            res.register(self.advance())
+
+            if self.currTok.type != TOK_EQUAL:
+                return res.failure(InvalidSyntax(
+                    self.currTok.pos_start, self.currTok.pos_end,
+                    'Expected ='   
+                ))
+            
+            res.register(self.advance())
+            #* expr is the value returned after parsing all the expressions after equal
+            value = res.register(self.expression()) 
+            
+            if res.error: return res
+            
+            return res.success(VarAssignNode(varName, value))
+        else:
+            return self.binaryOP(self.term, (TOK_ADD, TOK_SUB))  
