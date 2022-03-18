@@ -1,7 +1,7 @@
 import helpers.ErrHandler as err
 import helpers.Position as pos
-import Tokens as tk
 
+from Tokens import *
 from Interpreter import *
 from Parser import Parser
 from helpers.Context import Context
@@ -28,7 +28,7 @@ class Lexer:
         dot_count = 0
         pos_start = self.pos.copy()
 
-        while self.currChar != None and self.currChar in tk.DIGITS + '.':
+        while self.currChar != None and self.currChar in DIGITS + '.':
             if self.currChar == '.':
                 if dot_count == 1: break
                 dot_count += 1
@@ -38,20 +38,34 @@ class Lexer:
             self.advance()
 
         if dot_count == 0:
-            return tk.Token(tk.TOK_INT, int(num_str), pos_start, self.pos)
+            return Token(TOK_INT, int(num_str), pos_start, self.pos)
         else:
-            return tk.Token(tk.TOK_FLOAT, float(num_str),pos_start, self.pos)
+            return Token(TOK_FLOAT, float(num_str),pos_start, self.pos)
 
+    #* Tokenize the letters 
+    def tokenize_identifier(self):
+        id_str = ''
+        pos_start = self.pos.copy()
+
+        while self.currChar is not None and self.currChar in LETTERS_DIGITS + '_':
+            id_str += self.currChar
+            self.advance()
+
+        tok_type = TOK_KEYWORD  if id_str in KEYWORDS else TOK_IDENTIFIER
+        return Token(tok_type, id_str , pos_start, self.pos)
+ 
     def lexeme(self):
         tokens = []
        
         while self.currChar != None:   
             if self.currChar in ' \t':
                 self.advance()
-            elif self.currChar in tk.DIGITS:
+            elif self.currChar in DIGITS:
                 tokens.append(self.tokenize_num())
-            elif tk.OP_TOK_TAG.get(self.currChar) != None:
-                tokens.append(tk.Token(tk.OP_TOK_TAG.get(self.currChar), pos_start=self.pos))
+            elif self.currChar in LETTERS:
+                tokens.append(self.tokenize_identifier())
+            elif OP_TOK_TAG.get(self.currChar) != None:
+                tokens.append(Token(OP_TOK_TAG.get(self.currChar), pos_start=self.pos))
                 self.advance()
             else:
                 pos_start = self.pos.copy()
@@ -59,7 +73,7 @@ class Lexer:
                 self.advance()
                 return [], err.IllegalChar(pos_start, self.pos, "'" + char + "'")
 
-        tokens.append(tk.Token(tk.TOK_EOF, pos_start = self.pos))
+        tokens.append(Token(TOK_EOF, pos_start = self.pos))
         return tokens, None
 
 #! Run

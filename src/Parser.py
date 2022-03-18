@@ -46,22 +46,27 @@ class Parser:
        return res
 
     #* Chained function working:
-    #* Expression runs opCode which runs Term which runs opCode which runs factor.
+    #* Expression runs binaryOP which runs Term which runs binaryOP which runs factor.
     
     #* General function to reduce code repititive code
-    def opCode(self, func, ops):        
+    def binaryOP(self, funcA, ops, funcB = None):        
+        if funcB == None: funcB = funcA
+
         res = ParseResult()
-        left  = res.register(func()) 
+        left  = res.register(funcA()) 
         if res.error: return res
              
         while self.currTok.type in ops:
             opToken = self.currTok
             res.register(self.advance())
-            right = res.register(func())
+            right = res.register(funcB())
             if res.error: return res
             left = BinOPNode(opToken, left, right)
 
         return res.success(left)
+
+    def power(self):
+            return self.binaryOP(self.atom, (tk.TOK_POW), self.factor)
 
     def factor(self):
         res = ParseResult()
@@ -72,7 +77,16 @@ class Parser:
             factor = res.register(self.factor())
             if res.error: return res
             return res.success(UnaryOPNode(token, factor))
-        elif token.type in (tk.TOK_INT, tk.TOK_FLOAT):
+        
+        
+        return self.power()
+
+
+    def atom(self):
+        res = ParseResult()
+        token = self.currTok
+
+        if token.type in (tk.TOK_INT, tk.TOK_FLOAT):
             #* Idea is to return correct response here
             res.register(self.advance()) 
             return NumberNode(token)
@@ -88,18 +102,18 @@ class Parser:
                     self.currTok.pos_start, self.currTok.pos_end,
                     "Expected ')'"
                 ))
-
+        
         
         return res.failure(InvalidSyntax(
             token.pos_start,
             token.pos_end ,
-            'Expected int or float '
+            'Expected int, float, +, - or ( '
         ))
-        
+
     #* Term returns two number nodes as it calls factor function
     def term(self):
-        return self.opCode(self.factor, (tk.TOK_MUL, tk.TOK_DIV))        
+        return self.binaryOP(self.factor, (tk.TOK_MUL, tk.TOK_DIV))        
 
     #* Expression runs the code term and term runs the factor
     def expression(self):        
-        return self.opCode(self.term, (tk.TOK_ADD, tk.TOK_SUB))  
+        return self.binaryOP(self.term, (tk.TOK_ADD, tk.TOK_SUB))  

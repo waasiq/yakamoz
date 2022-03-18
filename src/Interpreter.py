@@ -34,6 +34,9 @@ class Interpreter:
             result, error = left.multipliedBy(right)
         elif(tokType == TOK_SUB):
             result, error = left.subtractedBy(right)
+        elif(tokType == TOK_POW):
+            result, error = left.powerOf(right)
+            
             
         if error: return res.failure(error)
         else:

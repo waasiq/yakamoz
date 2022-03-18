@@ -5,3 +5,10 @@ factor: (ADD | SUB) factor
 power : atom (POW factor)*
 atom  : INT | FLOAT
       : LBRACKET expr RBRACKET
+
+
+---------------------------------------------------
+
+oyleki      a                 =           123
+ ^          ^                 ^           ^
+KEYWORD     IDENTIFIER       EQUALS       INT
