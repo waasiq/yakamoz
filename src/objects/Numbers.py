@@ -1,4 +1,4 @@
-from helpers.ErrHandler import RTError
+from errors.ErrHandler import RTError
 class Number:
     def __init__(self, value):
         self.value = value
@@ -40,5 +40,11 @@ class Number:
                 )
             return Number(self.value / other.value).set_context(self.context), None
     
+    def copy(self):
+        copy = Number(self.value)
+        copy.set_pos(self.pos_start, self.pos_end)
+        copy.set_context(self.context)
+        return copy
+	
     def __repr__(self):
         return str(self.value)

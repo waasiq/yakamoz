@@ -5,4 +5,4 @@ while (True):
     result, error = lx.runLexer('<stdin>' , text)
 
     if error: print(error.toStr())
-    else: print(result)
+    elif result: print(result)

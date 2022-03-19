@@ -1,14 +1,15 @@
 
 #* Helper function import
-import helpers.ErrHandler as err
 import helpers.Position as pos
 from helpers.Context import Context
 
 #* Main function import
-from Tokens import *
-from Interpreter import *
 from Parser import Parser
-from SymbolTable import *
+
+from objects.Tokens import *
+from Interpreter import *
+from objects.SymbolTable import *
+from errors.ErrHandler import *
 
 #! Lexer Main Class
 class Lexer:
@@ -75,7 +76,7 @@ class Lexer:
                 pos_start = self.pos.copy()
                 char = self.currChar
                 self.advance()
-                return [], err.IllegalChar(pos_start, self.pos, "'" + char + "'")
+                return [], IllegalChar(pos_start, self.pos, "'" + char + "'")
 
         tokens.append(Token(TOK_EOF, pos_start = self.pos))
         return tokens, None
@@ -86,11 +87,17 @@ global_symbol_table = SymbolTable()
 global_symbol_table.set("null", Number(0))
 
 def runLexer(fn, text):
+    #* cleans the console
+    if text == 'cls': 
+        print("\033[H\033[J", end="")
+        return None,None
+    
     lex = Lexer(fn , text)
-    tokens, error = lex.lexeme()    
-    #print(tokens)
+    tokens, error = lex.lexeme()  #* Returns the tokens  
     if error: return None, error   
 
+    #? Sole purpose of the Parser class is to make a Abstract Syntax Tree which will be 
+    #? interpreted by our interpreter
     psr = Parser(tokens)  
     ast = psr.parse() #* Parser.parse returns us the AST 
     if ast.error: return None, ast.error

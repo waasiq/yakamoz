@@ -1,5 +1,7 @@
 
 #* AST Node Classes
+
+#* Basic Number Node class
 class NumberNode:
     def __init__(self, token):
         self.token = token

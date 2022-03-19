@@ -1,7 +1,7 @@
-from helpers.ErrHandler import RTError
-from helpers.Numbers import Number
-from helpers.RTResult import RTResult
-from Tokens import *
+from errors.ErrHandler import RTError
+from objects.Numbers import Number
+from wrappers.RTResult import RTResult
+from objects.Tokens import *
 
 
 #! Symbol table class holds the value of the variables respectively in a dict
@@ -26,35 +26,56 @@ class Interpreter:
         
     def visit_VarAccessNode(self, node, context):
         res = RTResult()
-        varName = node.var_name_token.value
-        value = context.symbol_table.get(varName)
+        #* value = name of the token
+        var_name = node.var_name_token.value 
+        value = context.symbol_table.get(var_name)
 
-        if not value:
+        if value is None:
             return res.failure(RTError(
                 node.pos_start, node.pos_end,
-                'No such variable',
+                f"{var_name} is not defined",
                 context
             ))
         
+        value = value.copy().set_pos(node.pos_start, node.pos_end)
         return res.success(value)
 
     def visit_VarAssignNode(self, node , context):
         res = RTResult()
-        varName = node.var_name_token.value
+        var_name = node.var_name_token.value
         value = res.register(self.visit(node.value_node, context))
 
         if res.error: return res
 
-        context.symbol_table.set(varName, value)
+        context.symbol_table.set(var_name, value)
         return res.success(value)
 
     def visit_BinOPNode(self, node, context):
         res = RTResult()
-
+    
         left = res.register(self.visit(node.leftN, context))
+        
+        #* Check if left is none and give error
+        if left is None: 
+            return res.failure(RTError(
+                node.pos_start, node.pos_end,
+                f"variable {node.leftN.var_name_token.value } not defined",
+                context
+            ))
+                
         if res.error: return res
+
         right = res.register(self.visit(node.rightN, context))
         if res.error: return res
+
+        #* Check if right is none and give error
+        if right is None: 
+            return res.failure(RTError(
+                node.pos_start, node.pos_end,
+                f"variable  { node.rightN.var_name_token.value } not defined",
+                context
+            ))
+                
 
         tokType = node.opToken.type
         if (tokType == TOK_ADD):

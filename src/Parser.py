@@ -1,11 +1,11 @@
-from helpers.ErrHandler import InvalidSyntax 
+from errors.ErrHandler import InvalidSyntax 
 
 #* ParseResult contains the node and error and the Parse is actually wrapped around
 #* the Parse Class for error checking
-from helpers.ParseResult import ParseResult
+from wrappers.ParseResult import ParseResult
 
 from AST import *
-from Tokens import *
+from objects.Tokens import *
 
 #! Parse result
 class Parser:
@@ -20,6 +20,7 @@ class Parser:
             self.currTok = self.tokens[self.tok_indx]
         return self.currTok
 
+    #! FUNCTION THAT GETS EXECUTED FIRST
     def parse(self):
        res = self.expression()
        if not res.error and self.currTok.type != TOK_EOF:
@@ -29,8 +30,8 @@ class Parser:
             ))
        return res
 
-    #* Chained function working:
-    #* Expression runs binaryOP which runs Term which runs binaryOP which runs factor.
+    #? Chained function working:
+    #? Expression runs binaryOP which runs Term which runs binaryOP which runs factor.
     
     #* General function to reduce code repititive code
     def binaryOP(self, funcA, ops, funcB = None):        
@@ -42,15 +43,13 @@ class Parser:
              
         while self.currTok.type in ops:
             opToken = self.currTok
-            res.register(self.advance())
+            res.register_advancement()
+            self.advance()
             right = res.register(funcB())
             if res.error: return res
             left = BinOPNode(opToken, left, right)
 
         return res.success(left)
-
-    def power(self):
-            return self.binaryOP(self.atom, (TOK_POW), self.factor)
 
     def factor(self):
         res = ParseResult()
@@ -60,11 +59,9 @@ class Parser:
             self.advance()
             factor = res.register(self.factor())
             if res.error: return res
-            return res.success(UnaryOPNode(token, factor))
-        
+            return res.success(UnaryOPNode(token, factor))    
         
         return self.power()
-
 
     def atom(self):
         res = ParseResult()
@@ -72,17 +69,21 @@ class Parser:
 
         if token.type in (TOK_INT, TOK_FLOAT):
             #* Idea is to return correct response here
-            res.register(self.advance()) 
+            res.register_advancement()
+            self.advance() 
             return NumberNode(token)
         elif token.type == TOK_IDENTIFIER:
-            res.register(self.advance())
+            res.register_advancement()
+            self.advance()
             return VarAccessNode(token)
         elif token.type == TOK_LBRACKET:
-            res.register(self.advance())
+            res.register_advancement()
+            self.advance()
             expr = res.register(self.expression())
             if res.error: return res
             if self.currTok.type == TOK_RBRACKET: #* Right bracket found return expr
-                res.register(self.advance())
+                res.register_advancement()
+                self.advance()
                 return res.success(expr)
             else:
                 return res.failure(InvalidSyntax(
@@ -94,19 +95,25 @@ class Parser:
         return res.failure(InvalidSyntax(
             token.pos_start,
             token.pos_end ,
-            'Expected int, float, +, - or ( '
+            'Expected int, float, identifier,+, - or ( '
         ))
 
     #* Term returns two number nodes as it calls factor function
     def term(self):
-        return self.binaryOP(self.factor, (TOK_MUL, TOK_DIV))        
+        return self.binaryOP(self.factor, (TOK_MUL, TOK_DIV))  
+
+    
+    def power(self):
+            return self.binaryOP(self.atom, (TOK_POW), self.factor)
+      
 
     #* Expression runs the code term and term runs the factor
     def expression(self): 
         res = ParseResult()
 
         if self.currTok.matches(TOK_KEYWORD, 'oyleki'):
-            res.register(self.advance())
+            res.register_advancement()
+            self.advance()
             
             if self.currTok.type != TOK_IDENTIFIER:
                 return res.failure(InvalidSyntax(
@@ -115,7 +122,8 @@ class Parser:
                 ))
             
             varName = self.currTok
-            res.register(self.advance())
+            res.register_advancement()
+            self.advance()
 
             if self.currTok.type != TOK_EQUAL:
                 return res.failure(InvalidSyntax(
@@ -123,12 +131,21 @@ class Parser:
                     'Expected ='   
                 ))
             
-            res.register(self.advance())
-            #* expr is the value returned after parsing all the expressions after equal
-            value = res.register(self.expression()) 
+            res.register_advancement()
+            self.advance()
+            #* value is the expression and its subnodes nodes parsed into an AST         
+            value = res.register(self.expression())
             
             if res.error: return res
-            
             return res.success(VarAssignNode(varName, value))
-        else:
-            return self.binaryOP(self.term, (TOK_ADD, TOK_SUB))  
+        
+        
+        node = res.register(self.binaryOP(self.term, (TOK_ADD, TOK_SUB)))
+
+        if res.error:
+            return res.failure(InvalidSyntax(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected 'oyleki', int, float, identifier, '+', '-' or '('"
+            ))
+
+        return res.success(node)
