@@ -1,10 +1,8 @@
 from errors.ErrHandler import RTError
 from objects.Numbers import Number
 from wrappers.RTResult import RTResult
-from objects.Tokens import *
+from Tokens import *
 
-
-#! Symbol table class holds the value of the variables respectively in a dict
 
 #* Implementation of visitor pattern in the Interpreter class
 #* The python implementation of ast also implements the same approach 
@@ -76,8 +74,8 @@ class Interpreter:
                 context
             ))
                 
-
         tokType = node.opToken.type
+        error = None
         if (tokType == TOK_ADD):
             result, error = left.addedTo(right)
         elif(tokType == TOK_DIV):
@@ -88,8 +86,23 @@ class Interpreter:
             result, error = left.subtractedBy(right)
         elif(tokType == TOK_POW):
             result, error = left.powerOf(right)
-            
-            
+        elif(tokType == TOK_GT):
+            result, error = left.greater_than(right)
+        elif(tokType == TOK_GTE):
+            result, error = left.greater_than_EQ(right)    
+        elif(tokType == TOK_LT):
+            result, error = left.lesser_than(right)
+        elif(tokType == TOK_LTE):
+            result, error = left.lesser_than_EQ(right)
+        elif(tokType == TOK_DEQUAL):
+            result, error = left.compares_to(right)
+        elif(tokType == TOK_NTEQUAL):
+            result, error = left.not_equal(right)
+        elif(node.opToken.matches(TOK_KEYWORD, 've')):
+            result, error = left.anded_by(right)
+        elif(node.opToken.matches(TOK_KEYWORD, 'veya')):
+            result, error = left.ored_by(right)
+
         if error: return res.failure(error)
         else:
             return res.success(result.set_pos(node.pos_start, node.pos_end))
@@ -98,9 +111,12 @@ class Interpreter:
         res = RTResult()
         number = res.register(self.visit(node.node, context))
         if res.error: return res
-
+        
+        error = None
         if node.opToken.type == TOK_SUB:
             number,error = number.multipliedBy(Number(-1)) 
+        elif node.opToken.matches(TOK_KEYWORD, 'yoket'):
+            number, error = number.implement_not()
 
         if error: return res.failure(error)
         else:

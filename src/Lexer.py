@@ -6,7 +6,7 @@ from helpers.Context import Context
 #* Main function import
 from Parser import Parser
 
-from objects.Tokens import *
+from Tokens import *
 from Interpreter import *
 from objects.SymbolTable import *
 from errors.ErrHandler import *
@@ -58,7 +58,50 @@ class Lexer:
 
         tok_type = TOK_KEYWORD if id_str in KEYWORDS else TOK_IDENTIFIER
         return Token(tok_type, id_str , pos_start, self.pos)
- 
+    
+    def tokenize_notEQ(self):
+        pos_copy = self.pos.copy()
+        self.advance()
+
+        if self.currChar == '=':
+            self.advance()
+            return Token(TOK_NTEQUAL, pos_start = pos_copy, pos_end= self.pos), None
+
+        self.advance()
+        return None, ExpectedCharError(pos_copy, self.pos, "'=' (after !)") 
+    
+    def tokenize_equal(self):
+        pos_copy = self.pos.copy()
+        self.advance()
+        
+        if self.currChar == '=':
+            self.advance()
+            return Token(TOK_DEQUAL, pos_start = pos_copy, pos_end= self.pos)
+        
+        return Token(TOK_EQUAL, pos_start = pos_copy, pos_end = self.pos) 
+
+
+    def tokenize_greater(self):
+        pos_copy = self.pos.copy()
+        self.advance()
+
+        if self.currChar == '=':
+            self.advance()
+            return Token(TOK_GTE, pos_start = pos_copy, pos_end = self.pos) 
+        
+        return Token(TOK_GT, pos_start = pos_copy, pos_end = self.pos) 
+
+    def tokenize_lessor(self):
+        pos_copy = self.pos.copy()
+        self.advance()
+
+        if self.currChar == '=':
+            self.advance()
+            return Token(TOK_LTE, pos_start = pos_copy, pos_end = self.pos) 
+        
+        return Token(TOK_LT, pos_start = pos_copy, pos_end = self.pos) 
+
+
     def lexeme(self):
         tokens = []
        
@@ -69,6 +112,16 @@ class Lexer:
                 tokens.append(self.tokenize_num())
             elif self.currChar in LETTERS:
                 tokens.append(self.tokenize_letters())
+            elif self.currChar == '>':
+                tokens.append(self.tokenize_greater())
+            elif self.currChar == '<':
+                tokens.append(self.tokenize_lessor())
+            elif self.currChar == '!':
+                token, error = self.tokenize_notEQ()
+                if error: return [], error
+                tokens.append(token)
+            elif self.currChar == '=':
+                tokens.append(self.tokenize_equal())
             elif OP_TOK_TAG.get(self.currChar) != None:
                 tokens.append(Token(OP_TOK_TAG.get(self.currChar), pos_start=self.pos))
                 self.advance()
@@ -76,7 +129,7 @@ class Lexer:
                 pos_start = self.pos.copy()
                 char = self.currChar
                 self.advance()
-                return [], IllegalChar(pos_start, self.pos, "'" + char + "'")
+                return [], IllegalCharError(pos_start, self.pos, "'" + char + "'")
 
         tokens.append(Token(TOK_EOF, pos_start = self.pos))
         return tokens, None
@@ -84,7 +137,9 @@ class Lexer:
 #! Run
 
 global_symbol_table = SymbolTable()
-global_symbol_table.set("null", Number(0))
+global_symbol_table.set("NULL", Number(0))
+global_symbol_table.set("Dogru", Number(1))
+global_symbol_table.set("Yanlis", Number(0))
 
 def runLexer(fn, text):
     #* cleans the console
@@ -102,6 +157,8 @@ def runLexer(fn, text):
     ast = psr.parse() #* Parser.parse returns us the AST 
     if ast.error: return None, ast.error
 
+    #return ast.node, None
+    
     context = Context('<program>')
     context.symbol_table = global_symbol_table
     intrpt = Interpreter()    

@@ -1,11 +1,11 @@
-from errors.ErrHandler import InvalidSyntax 
+from errors.ErrHandler import InvalidSyntaxError 
 
 #* ParseResult contains the node and error and the Parse is actually wrapped around
 #* the Parse Class for error checking
 from wrappers.ParseResult import ParseResult
 
 from AST import *
-from objects.Tokens import *
+from Tokens import *
 
 #! Parse result
 class Parser:
@@ -20,11 +20,10 @@ class Parser:
             self.currTok = self.tokens[self.tok_indx]
         return self.currTok
 
-    #! FUNCTION THAT GETS EXECUTED FIRST
     def parse(self):
        res = self.expression()
        if not res.error and self.currTok.type != TOK_EOF:
-            return res.failure(InvalidSyntax(
+            return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
                 'Expected an operator '
             ))
@@ -41,7 +40,7 @@ class Parser:
         left  = res.register(funcA()) 
         if res.error: return res
              
-        while self.currTok.type in ops:
+        while self.currTok.type in ops or (self.currTok.value , self.currTok.value) in ops:
             opToken = self.currTok
             res.register_advancement()
             self.advance()
@@ -50,6 +49,30 @@ class Parser:
             left = BinOPNode(opToken, left, right)
 
         return res.success(left)
+    
+    def comp_expr(self):
+        res = ParseResult()
+
+        if self.currTok.matches(TOK_KEYWORD, 'yoket'):
+            opTOK = self.currTok
+            res.register_advancement()
+            self.advance()
+            node = res.register(self.comp_expr())
+            if res.error: return res 
+            return res.success(UnaryOPNode(opTOK, node))
+
+        node = res.register(self.binaryOP(self.arith_expr, (TOK_DEQUAL, TOK_KEYWORD, TOK_NTEQUAL , TOK_GT, TOK_GTE, TOK_LTE, TOK_LT)))
+
+        if res.error: 
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                'Expected int, float, identifier,+, - ,( , YOKET '
+            ))
+
+        return res.success(node)
+
+    def arith_expr(self):
+        return self.binaryOP(self.term, (TOK_ADD, TOK_SUB))
 
     def factor(self):
         res = ParseResult()
@@ -86,13 +109,12 @@ class Parser:
                 self.advance()
                 return res.success(expr)
             else:
-                return res.failure(InvalidSyntax(
+                return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
                     "Expected ')'"
                 ))
-        
-        
-        return res.failure(InvalidSyntax(
+       
+        return res.failure(InvalidSyntaxError(
             token.pos_start,
             token.pos_end ,
             'Expected int, float, identifier,+, - or ( '
@@ -101,11 +123,9 @@ class Parser:
     #* Term returns two number nodes as it calls factor function
     def term(self):
         return self.binaryOP(self.factor, (TOK_MUL, TOK_DIV))  
-
-    
+   
     def power(self):
-            return self.binaryOP(self.atom, (TOK_POW), self.factor)
-      
+        return self.binaryOP(self.atom, (TOK_POW, ), self.factor)
 
     #* Expression runs the code term and term runs the factor
     def expression(self): 
@@ -116,7 +136,7 @@ class Parser:
             self.advance()
             
             if self.currTok.type != TOK_IDENTIFIER:
-                return res.failure(InvalidSyntax(
+                return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
                     'Expected an identifier'   
                 ))
@@ -126,7 +146,7 @@ class Parser:
             self.advance()
 
             if self.currTok.type != TOK_EQUAL:
-                return res.failure(InvalidSyntax(
+                return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
                     'Expected ='   
                 ))
@@ -140,10 +160,10 @@ class Parser:
             return res.success(VarAssignNode(varName, value))
         
         
-        node = res.register(self.binaryOP(self.term, (TOK_ADD, TOK_SUB)))
+        node = res.register(self.binaryOP(self.comp_expr, ((TOK_KEYWORD, 've'), (TOK_KEYWORD, 'veya'))))
 
         if res.error:
-            return res.failure(InvalidSyntax(
+            return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
                 "Expected 'oyleki', int, float, identifier, '+', '-' or '('"
             ))

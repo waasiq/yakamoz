@@ -1,16 +1,13 @@
-expr  : KEYWORD: oyleki IDENTIFIER EQUALS expr
-      : term ((ADD | SUB) term)*
-term  : factor ((MUL | DIV) factor)*
-factor: (ADD | SUB) factor
-      : power
-power : atom (POW factor)*
-atom  : INT | FLOAT | IDENTIFIER
-      : LBRACKET expr RBRACKET
+expr            : KEYWORD: oyleki IDENTIFIER EQUALS expr
+                : comp-expr ((KEYWORD: AND | KEYWORD: OR) comp-expr)*
+comp-expr       : NOT comp-expr
+                : (arith-expr ((DEQUAL, NEQUAL | GT | GTE | LT | LTE) arith-expr))*
+arith-expr      : term ((ADD | SUB) term)*
+term            : factor ((MUL | DIV) factor)*
+factor          : (ADD | SUB) factor
+                : power
+power           : atom (POW factor)*
+atom            : INT | FLOAT | IDENTIFIER
+                : LBRACKET expr RBRACKET
 
 ^ Here expr == expression
-
----------------------------------------------------
-
-oyleki      a                 =           123
- ^          ^                 ^           ^
-KEYWORD     IDENTIFIER       EQUALS       INT

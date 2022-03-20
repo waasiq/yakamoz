@@ -1,4 +1,6 @@
 
+#! Symbol table class holds the value of the variables respectively in a dict
+
 class SymbolTable:
     def __init__(self):
         self.symbols = {}

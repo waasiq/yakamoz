@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 import string
 
 #! Tokens and Tokenizers
@@ -23,6 +22,13 @@ TOK_IDENTIFIER = 'IDENTIFIER'
 TOK_KEYWORD    = 'KEYWORD'
 TOK_EQUAL      = 'EQUALS'
 
+TOK_DEQUAL      = 'DOUBLEQUALS'
+TOK_NTEQUAL     = 'NOTEQUALS'
+TOK_GT          = 'GREATERTHAN'
+TOK_GTE         = 'GREATERTHANEQTO'
+TOK_LT          = 'LESSTHAN'
+TOK_LTE         = 'LESSTHANEQTO'
+
 
 #! Dict for the Operator
 OP_TOK_TAG = {
@@ -30,18 +36,19 @@ OP_TOK_TAG = {
     '-'     : 'SUB',
     '/'     : 'DIV',
     '*'     : 'MUL',
-    '='     : 'EQUALS',
-    'oyleki': 'KEYWORD',
     '{'     : 'LBRACKET',
     '}'     : 'RBRACKET',
     '('     : 'LBRACKET',
     ')'     : 'RBRACKET',
-    '^'     : 'POW' 
+    '^'     : 'POW',
 }
 
 #! A list of the keywords for yakamoz
 KEYWORDS = [
-    'oyleki'
+    'oyleki',
+    'yoket',
+    've',
+    'veya'
 ]
 
 class Token:

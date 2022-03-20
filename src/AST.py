@@ -28,6 +28,14 @@ class BinOPNode:
         return f'({self.leftN}, {self.opToken}, {self.rightN})'
 
 #* Unary Operation Node , unary operation: ++ , -- 
+#* It will contain the opTOKEN eg: +,- and node beside it, will look something like 
+#* this in the AST TREE:
+#*             +
+#*          /
+#*       +
+#*     / 
+#*   2 
+
 class UnaryOPNode:
     def __init__(self, opToken, node):
         self.opToken = opToken
@@ -42,7 +50,6 @@ class UnaryOPNode:
 
 #* Variable Assignment and Access Nodes
 
-#* Update this  
 class VarAssignNode:
     def __init__(self, var_name_token, value_node):
         self.var_name_token = var_name_token
