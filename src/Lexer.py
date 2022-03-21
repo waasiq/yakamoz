@@ -151,11 +151,14 @@ def runLexer(fn, text):
     tokens, error = lex.lexeme()  #* Returns the tokens  
     if error: return None, error   
 
+    #return tokens, None
+
     #? Sole purpose of the Parser class is to make a Abstract Syntax Tree which will be 
     #? interpreted by our interpreter
     psr = Parser(tokens)  
     ast = psr.parse() #* Parser.parse returns us the AST 
     if ast.error: return None, ast.error
+
 
     #return ast.node, None
     

@@ -48,7 +48,11 @@ KEYWORDS = [
     'oyleki',
     'yoket',
     've',
-    'veya'
+    'veya',
+    'if',
+    'then',
+    'elseif',
+    'else',
 ]
 
 class Token:

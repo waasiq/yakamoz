@@ -21,7 +21,7 @@ class Parser:
         return self.currTok
 
     def parse(self):
-       res = self.expression()
+       res = self.expr()
        if not res.error and self.currTok.type != TOK_EOF:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
@@ -39,8 +39,8 @@ class Parser:
         res = ParseResult()
         left  = res.register(funcA()) 
         if res.error: return res
-             
-        while self.currTok.type in ops or (self.currTok.value , self.currTok.value) in ops:
+
+        while self.currTok.type in ops or (self.currTok.type , self.currTok.value) in ops:
             opToken = self.currTok
             res.register_advancement()
             self.advance()
@@ -61,7 +61,7 @@ class Parser:
             if res.error: return res 
             return res.success(UnaryOPNode(opTOK, node))
 
-        node = res.register(self.binaryOP(self.arith_expr, (TOK_DEQUAL, TOK_KEYWORD, TOK_NTEQUAL , TOK_GT, TOK_GTE, TOK_LTE, TOK_LT)))
+        node = res.register(self.binaryOP(self.arith_expr, (TOK_DEQUAL, TOK_NTEQUAL , TOK_GT, TOK_GTE, TOK_LTE, TOK_LT)))
 
         if res.error: 
             return res.failure(InvalidSyntaxError(
@@ -86,8 +86,72 @@ class Parser:
         
         return self.power()
 
+    def if_expr(self):
+        res = ParseResult()
+        cases = []
+        else_case = None
+
+        if self.currTok.matches(TOK_KEYWORD, 'if') == False:
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected 'if' keyword"
+            ))
+        
+
+        res.register_advancement()
+        self.advance()
+        
+        condition = res.register(self.expr()) 
+        if res.error: return res
+
+        if not self.currTok.matches(TOK_KEYWORD, 'then'):
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                f"Expected 'then'"
+            ))
+
+        res.register_advancement()
+        self.advance()
+        
+        expr  = res.register(self.expr())         
+        if res.error: return res
+        cases.append((condition, expr))
+
+        
+    
+        while self.currTok.matches(TOK_KEYWORD, 'elseif'):
+            res.register_advancement()
+            self.advance()
+
+            condition = res.register(self.expr())
+            if res.error: return res
+
+            if not self.currTok.matches(TOK_KEYWORD, 'then'):
+                return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                f"Expected 'then'"
+                ))
+
+            res.register_advancement()
+            self.advance()
+
+            expr = res.register(self.expr())
+            if res.error: return res
+            cases.append((condition, expr)) 
+
+        if self.currTok.matches(TOK_KEYWORD, 'else'):
+            res.register_advancement()
+            self.advance()
+
+            else_case = res.register(self.expr())
+            if res.error: return res
+
+        return res.success(ifNode(cases, else_case))
+
+        
     def atom(self):
         res = ParseResult()
+        error = None
         token = self.currTok
 
         if token.type in (TOK_INT, TOK_FLOAT):
@@ -102,7 +166,7 @@ class Parser:
         elif token.type == TOK_LBRACKET:
             res.register_advancement()
             self.advance()
-            expr = res.register(self.expression())
+            expr = res.register(self.expr())
             if res.error: return res
             if self.currTok.type == TOK_RBRACKET: #* Right bracket found return expr
                 res.register_advancement()
@@ -113,7 +177,11 @@ class Parser:
                     self.currTok.pos_start, self.currTok.pos_end,
                     "Expected ')'"
                 ))
-       
+        elif token.matches(TOK_KEYWORD, 'if'):
+            if_expr = res.register(self.if_expr())
+            if res.error: return res
+            return res.success(if_expr)           
+        
         return res.failure(InvalidSyntaxError(
             token.pos_start,
             token.pos_end ,
@@ -128,7 +196,7 @@ class Parser:
         return self.binaryOP(self.atom, (TOK_POW, ), self.factor)
 
     #* Expression runs the code term and term runs the factor
-    def expression(self): 
+    def expr(self): 
         res = ParseResult()
 
         if self.currTok.matches(TOK_KEYWORD, 'oyleki'):
@@ -154,11 +222,10 @@ class Parser:
             res.register_advancement()
             self.advance()
             #* value is the expression and its subnodes nodes parsed into an AST         
-            value = res.register(self.expression())
+            value = res.register(self.expr())
             
             if res.error: return res
             return res.success(VarAssignNode(varName, value))
-        
         
         node = res.register(self.binaryOP(self.comp_expr, ((TOK_KEYWORD, 've'), (TOK_KEYWORD, 'veya'))))
 

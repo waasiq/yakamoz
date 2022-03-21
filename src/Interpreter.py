@@ -107,6 +107,26 @@ class Interpreter:
         else:
             return res.success(result.set_pos(node.pos_start, node.pos_end))
 
+    def visit_ifNode(self, node, context):
+        res = RTResult()
+        
+        for condition, expr in node.cases:
+            condition_val = res.register(self.visit(condition, context))
+            if res.error: return res
+
+            if condition_val.isTrue():
+                expr_val = res.register(self.visit(expr, context))
+                if res.error: return res
+                return res.success(expr_val)
+
+        if node.else_case: 
+                else_val = res.register(self.visit(node.else_case, context))
+                if res.error: return res
+                return res.success(else_val)
+
+        return res.success(None)
+
+
     def visit_UnaryOPNode(self, node, context):
         res = RTResult()
         number = res.register(self.visit(node.node, context))

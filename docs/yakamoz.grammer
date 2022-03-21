@@ -9,5 +9,10 @@ factor          : (ADD | SUB) factor
 power           : atom (POW factor)*
 atom            : INT | FLOAT | IDENTIFIER
                 : LBRACKET expr RBRACKET
+if-expr         : KEYWORD: if expr KEYWORD: then expr
+                  (KEYWORD: elseif expr KEYWORD: then expr)*
+                  (KEYWORD: else expr) ?
 
-^ Here expr == expression
+-------------------------------------------------------------
+
+IF <condition> THEN <expression> ELIF <condition> THEN <expression> ELSE <expression
