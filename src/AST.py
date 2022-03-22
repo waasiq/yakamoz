@@ -50,15 +50,23 @@ class UnaryOPNode:
 
 #* IF, FOR, WHILE Nodes below this
 class forNode:
-    def __init__(self, var_name, start_val, end_val, step_value, body_node):
-        self.var_name       = var_name
-        self.start_val      = start_val        
-        self.end_val        = end_val
-        self.step_value     = step_value
-        self.body_node      = body_node
+    def __init__(self, var_name_node, start_val_node, end_val_node, step_value_node, body_node):
+        self.var_name_node       = var_name_node
+        self.start_val_node      = start_val_node        
+        self.end_val_node        = end_val_node
+        self.step_value_node     = step_value_node
+        self.body_node           = body_node
 
-        self.pos_start      = self.var_name.pos_start
+        self.pos_start      = self.var_name_node.pos_start
         self.pos_end        = self.body_node.pos_end
+
+class whileNode:
+        def __init__(self, condition_node, body_node):
+            self.condition_node       = condition_node
+            self.body_node            = body_node
+
+            self.pos_start      = self.condition_node.pos_start
+            self.pos_end        = self.body_node.pos_end
 
 class ifNode:
       def __init__(self, cases, else_case):

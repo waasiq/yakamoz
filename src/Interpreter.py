@@ -129,15 +129,14 @@ class Interpreter:
     def visit_forNode(self, node, context):
         res = RTResult()
 
-
-        start_value = res.register(self.visit(node.start_val, context))
+        start_value = res.register(self.visit(node.start_val_node, context))
         if res.error: return res
 
-        end_value = res.register(self.visit(node.end_val, context))
+        end_value = res.register(self.visit(node.end_val_node, context))
         if res.error: return res
 
-        if node.step_value:
-            step_value = res.register(self.visit(node.step_value, context))
+        if node.step_value_node:
+            step_value = res.register(self.visit(node.step_value_node, context))
             if res.error: return res
         else: 
             step_value = Number(1)
@@ -151,7 +150,7 @@ class Interpreter:
             condition = lambda: i > end_value.value
         
         while condition():
-            context.symbol_table.set(node.var_name.value, Number(i))
+            context.symbol_table.set(node.var_name_node.value, Number(i))
             i += step_value.value
 
             res.register(self.visit(node.body_node, context))
@@ -159,7 +158,20 @@ class Interpreter:
 
         return res.success(None)
 
-       
+    def visit_whileNode(self, node, context):
+        res = RTResult()
+
+        while True: 
+            condition = res.register(self.visit(node.condition_node, context))
+            if res.error: return res
+
+            if condition.isTrue() == False: break
+
+            res.register(self.visit(node.body_node, context))
+            if res.error: return res
+
+        return res.success(None)
+
 
     def visit_UnaryOPNode(self, node, context):
         res = RTResult()

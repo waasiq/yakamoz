@@ -148,7 +148,32 @@ class Parser:
 
     def while_expr(self):
         res = ParseResult()
-        pass
+        
+        if self.currTok.matches(TOK_KEYWORD, 'while') == False:
+            return res.failure(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected 'while' keyword"
+            )
+        
+        res.register_advancement()
+        self.advance()
+
+        condition = res.register(self.expr())
+        if res.error: return res
+
+        if self.currTok.matches(TOK_KEYWORD, 'then') == False:
+            return res.failure(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected 'then' keyword"
+            )
+        
+        res.register_advancement()
+        self.advance()
+
+        body = res.register(self.expr())
+        if res.error: return res
+
+        return res.success(whileNode(condition , body))
 
     def for_expr(self):
         res = ParseResult()
