@@ -160,11 +160,10 @@ def runLexer(fn, text):
     if ast.error: return None, ast.error
 
 
-    #return ast.node, None
-    
     context = Context('<program>')
     context.symbol_table = global_symbol_table
     intrpt = Interpreter()    
     result = intrpt.visit(ast.node, context) #* ast.node -> Head node
 
+    #print(context.symbol_table.symbols)
     return  result.value, result.error

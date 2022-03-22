@@ -126,6 +126,40 @@ class Interpreter:
 
         return res.success(None)
 
+    def visit_forNode(self, node, context):
+        res = RTResult()
+
+
+        start_value = res.register(self.visit(node.start_val, context))
+        if res.error: return res
+
+        end_value = res.register(self.visit(node.end_val, context))
+        if res.error: return res
+
+        if node.step_value:
+            step_value = res.register(self.visit(node.step_value, context))
+            if res.error: return res
+        else: 
+            step_value = Number(1)
+
+        i = start_value.value
+        
+        
+        if step_value.value >= 0:
+            condition = lambda: i < end_value.value
+        else:
+            condition = lambda: i > end_value.value
+        
+        while condition():
+            context.symbol_table.set(node.var_name.value, Number(i))
+            i += step_value.value
+
+            res.register(self.visit(node.body_node, context))
+            if res.error: return res
+
+        return res.success(None)
+
+       
 
     def visit_UnaryOPNode(self, node, context):
         res = RTResult()

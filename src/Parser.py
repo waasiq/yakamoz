@@ -116,8 +116,6 @@ class Parser:
         expr  = res.register(self.expr())         
         if res.error: return res
         cases.append((condition, expr))
-
-        
     
         while self.currTok.matches(TOK_KEYWORD, 'elseif'):
             res.register_advancement()
@@ -148,7 +146,81 @@ class Parser:
 
         return res.success(ifNode(cases, else_case))
 
+    def while_expr(self):
+        res = ParseResult()
+        pass
+
+    def for_expr(self):
+        res = ParseResult()
+
+        if self.currTok.matches(TOK_KEYWORD, 'for') == False:
+            return res.failure(InvalidSyntaxError(
+                self.pos_start, self.pos_end,
+                "Expected 'for' keyword"
+            ))
+
+        res.register_advancement()
+        self.advance()
+
+        if self.currTok.type != TOK_IDENTIFIER: 
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                'Expected an identifier'
+            ))
+
+        var_name = self.currTok
+
+        res.register_advancement()
+        self.advance()
+
+        if self.currTok.type != TOK_EQUAL:
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected '='"
+            ))
+
+        res.register_advancement()
+        self.advance()
+
+        first_expr = res.register(self.expr())
+        if res.error: return res
+
+        if self.currTok.matches(TOK_KEYWORD, 'to') == False:
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected 'to' keyword"
+            ))
+
+        res.register_advancement()
+        self.advance()
         
+        second_expr = res.register(self.expr())
+        if res.error: return res
+
+
+        if self.currTok.matches(TOK_KEYWORD, 'step'):
+            res.register_advancement()
+            self.advance()
+
+            step_value = res.register(self.expr())
+            if res.error: return res
+        else:
+            step_value = None
+
+        if self.currTok.matches(TOK_KEYWORD, 'then') == False:
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected 'then' keyword"
+            ))
+
+        res.register_advancement()
+        self.advance()
+
+        body = res.register(self.expr())
+        if res.error: return res
+        
+        return res.success(forNode(var_name, first_expr, second_expr, step_value, body))
+
     def atom(self):
         res = ParseResult()
         error = None
@@ -181,7 +253,15 @@ class Parser:
             if_expr = res.register(self.if_expr())
             if res.error: return res
             return res.success(if_expr)           
-        
+        elif token.matches(TOK_KEYWORD, 'for'):
+            for_expr = res.register(self.for_expr())
+            if res.error: return res
+            return res.success(for_expr)
+        elif token.matches(TOK_KEYWORD, 'while'):
+            while_expr = res.register(self.while_expr())
+            if res.error: return res
+            return res.success(while_expr)
+
         return res.failure(InvalidSyntaxError(
             token.pos_start,
             token.pos_end ,

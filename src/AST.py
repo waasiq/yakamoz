@@ -48,6 +48,18 @@ class UnaryOPNode:
         return f'({self.opToken} , {self.node})'
 
 
+#* IF, FOR, WHILE Nodes below this
+class forNode:
+    def __init__(self, var_name, start_val, end_val, step_value, body_node):
+        self.var_name       = var_name
+        self.start_val      = start_val        
+        self.end_val        = end_val
+        self.step_value     = step_value
+        self.body_node      = body_node
+
+        self.pos_start      = self.var_name.pos_start
+        self.pos_end        = self.body_node.pos_end
+
 class ifNode:
       def __init__(self, cases, else_case):
         self.cases = cases
@@ -57,7 +69,6 @@ class ifNode:
         self.pos_end = (self.else_case or self.cases[len(self.cases) - 1][0]).pos_end
 
 #* Variable Assignment and Access Nodes
-
 class VarAssignNode:
     def __init__(self, var_name_token, value_node):
         self.var_name_token = var_name_token
@@ -71,6 +82,3 @@ class VarAccessNode:
         self.var_name_token      = var_name_token
         self.pos_start           = self.var_name_token.pos_start
         self.pos_end             = self.var_name_token.pos_end
-
-    def __repr__(self):
-        return f'{self.value}'

@@ -53,6 +53,10 @@ KEYWORDS = [
     'then',
     'elseif',
     'else',
+    'for',
+    'to',
+    'step',
+    'while'
 ]
 
 class Token:

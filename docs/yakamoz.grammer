@@ -1,18 +1,30 @@
 expr            : KEYWORD: oyleki IDENTIFIER EQUALS expr
                 : comp-expr ((KEYWORD: AND | KEYWORD: OR) comp-expr)*
+
 comp-expr       : NOT comp-expr
                 : (arith-expr ((DEQUAL, NEQUAL | GT | GTE | LT | LTE) arith-expr))*
+
 arith-expr      : term ((ADD | SUB) term)*
+
 term            : factor ((MUL | DIV) factor)*
+
 factor          : (ADD | SUB) factor
                 : power
+
 power           : atom (POW factor)*
+
 atom            : INT | FLOAT | IDENTIFIER
                 : LBRACKET expr RBRACKET
+                : if-expr
+                : for-expr
+                : while-expr
+
 if-expr         : KEYWORD: if expr KEYWORD: then expr
                   (KEYWORD: elseif expr KEYWORD: then expr)*
                   (KEYWORD: else expr) ?
 
--------------------------------------------------------------
+for-expr        : KEYWORD: for IDENTIFIER EQ expr KEYWORD: to expr
+                  (STEP expr)?
+                  KEYWORD: then expr
 
-IF <condition> THEN <expression> ELIF <condition> THEN <expression> ELSE <expression
+while-expr      : KEYWORD: while expr KEYWORD: then expr
