@@ -11,20 +11,27 @@ term            : factor ((MUL | DIV) factor)*
 factor          : (ADD | SUB) factor
                 : power
 
-power           : atom (POW factor)*
+power           : call (POW factor)*
+
+call            : atom (LBRACKET (IDENTIFIER (COMMA IDENTIFIER)*)? RBRACKET)?
 
 atom            : INT | FLOAT | IDENTIFIER
                 : LBRACKET expr RBRACKET
                 : if-expr
                 : for-expr
                 : while-expr
+                : func
 
 if-expr         : KEYWORD: if expr KEYWORD: then expr
-                  (KEYWORD: elseif expr KEYWORD: then expr)*
-                  (KEYWORD: else expr) ?
+                |  (KEYWORD: elseif expr KEYWORD: then expr)*
+                |  (KEYWORD: else expr) ?
 
 for-expr        : KEYWORD: for IDENTIFIER EQ expr KEYWORD: to expr
-                  (STEP expr)?
-                  KEYWORD: then expr
+                | (STEP expr)?
+                | KEYWORD: then expr
 
 while-expr      : KEYWORD: while expr KEYWORD: then expr
+
+func            : KEYWORD: func IDENTIFIER?
+                | LBRACKET (IDENTIFIER (COMMA IDENTIFIER)* )? RBRACKET
+                | ARROW expr

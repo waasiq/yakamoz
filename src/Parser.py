@@ -246,6 +246,138 @@ class Parser:
         
         return res.success(forNode(var_name, first_expr, second_expr, step_value, body))
 
+    def func_def(self):
+        res = ParseResult()
+
+        if self.currTok.matches(TOK_KEYWORD, 'func') == False:
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected 'func' keyword"
+            ))
+        
+        res.register_advancement()
+        self.advance()
+
+        if self.currTok == TOK_IDENTIFIER: 
+           var_name_token = self.currTok
+
+           res.register_advancement()
+           self.advance()
+           if self.currTok != TOK_LBRACKET:
+               return res.failure(InvalidSyntaxError(
+                   self.currTok.pos_start, self.currTok.pos_end, 
+                   'Expected Left Bracket'
+               ))
+        else:
+            var_name_token = None
+
+            res.register_advancement()
+            self.advance()
+            if self.currTok != TOK_LBRACKET:
+               return res.failure(InvalidSyntaxError(
+                   self.currTok.pos_start, self.currTok.pos_end, 
+                   'Expected Left Bracket'
+               ))
+
+        res.register_advancement()
+        self.advance()
+
+        arg_name_tokens = []
+
+        if self.currTok == TOK_IDENTIFIER:
+            arg_name_tokens.append(self.currTok)
+
+            res.register_advancement()
+            self.advance()
+
+            while self.currTok == TOK_COMMA:
+                res.register_advancement()
+                self.advance()
+
+                if self.currTok != TOK_IDENTIFIER:
+                    return res.failure(InvalidSyntaxError(
+                        self.currTok.pos_start, self.currTok.pos_end,
+                        'Expected an identifier'
+                    ))
+                arg_name_tokens.append(self.currTok)
+
+                res.register_advancement()
+                self.advance()
+
+            if self.currTok != TOK_RBRACKET:
+                return res.failutre(InvalidSyntaxError(
+                    self.currTok.pos_start, self.currTok.pos_end,
+                    'Expected ) identifier'
+                ))
+      
+        if self.currTok != TOK_RBRACKET:
+            return res.failutre(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                'Expected ) identifier'
+            ))
+    
+        res.register_advancement()
+        self.advance()
+
+        if self.currTok != TOK_ARROW:
+            return res.failutre(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                'Expected -> identifier'
+            ))
+
+        res.register_advancement()
+        self.advance()
+
+        body_node = res.register(self.expr())
+        if res.error: return res
+
+        return res.success(funcDefNode(
+            var_name_token,
+            arg_name_tokens,
+            body_node
+        ))
+
+    def call(self):
+        res = ParseResult() 
+        atom = res.register(self.atom())
+        if res.error: return res
+
+        if self.currTok == TOK_LBRACKET:
+            res.register_advancement()
+            self.advance()
+            arg_nodes = []
+
+            if self.currTok == TOK_RBRACKET:
+                res.register_advancement()
+                self.advance()
+            else: 
+                arg_nodes.append(res.register(self.expr()))
+                
+                if res.error:
+                    return res.failure(InvalidSyntaxError(
+						self.current_tok.pos_start, self.current_tok.pos_end,
+						"Expected ')', 'VAR', 'IF', 'FOR', 'WHILE', 'FUN', int, float, identifier, '+', '-', '(' or 'NOT'"
+					))
+                
+                while self.currTok == TOK_COMMA: 
+                    res.register_advancement()
+                    self.advance()
+
+                    arg_nodes.append(res.register(self.expr()))
+                    if res.error: return res
+                
+                if self.current_tok.type != TOK_RBRACKET:
+                    return res.failure(InvalidSyntaxError(
+						self.current_tok.pos_start, self.current_tok.pos_end,
+						f"Expected ',' or ')'"
+					))
+                res.register_advancement()
+                self.advance()
+
+                return res.success(funcCallNode(atom, arg_nodes))
+            
+            return atom
+
     def atom(self):
         res = ParseResult()
         error = None
@@ -286,6 +418,10 @@ class Parser:
             while_expr = res.register(self.while_expr())
             if res.error: return res
             return res.success(while_expr)
+        elif token.matches(TOK_KEYWORD, 'func'):
+            func_def = res.register(self.func_def())
+            if res.error: return res
+            return res.sucess(func_def)
 
         return res.failure(InvalidSyntaxError(
             token.pos_start,
@@ -298,7 +434,7 @@ class Parser:
         return self.binaryOP(self.factor, (TOK_MUL, TOK_DIV))  
    
     def power(self):
-        return self.binaryOP(self.atom, (TOK_POW, ), self.factor)
+        return self.binaryOP(self.call, (TOK_POW, ), self.factor)
 
     #* Expression runs the code term and term runs the factor
     def expr(self): 

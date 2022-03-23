@@ -101,6 +101,15 @@ class Lexer:
         
         return Token(TOK_LT, pos_start = pos_copy, pos_end = self.pos) 
 
+    def tokenize_minus_or_arrow(self):
+        pos_copy = self.pos.copy()
+        self.advance()
+
+        if self.currChar == '>':
+            self.advance()
+            return Token(TOK_ARROW, pos_start = pos_copy, pos_end = self.pos)
+        
+        return Token(TOK_SUB, pos_start = pos_copy, pos_end = self.pos)
 
     def lexeme(self):
         tokens = []
@@ -122,6 +131,11 @@ class Lexer:
                 tokens.append(token)
             elif self.currChar == '=':
                 tokens.append(self.tokenize_equal())
+            elif self.currChar == ',':
+                tokens.append(Token(TOK_COMMA, pos_start=self.pos))
+                self.advance()
+            elif self.currChar == '-':
+                tokens.append(self.tokenize_minus_or_arrow())
             elif OP_TOK_TAG.get(self.currChar) != None:
                 tokens.append(Token(OP_TOK_TAG.get(self.currChar), pos_start=self.pos))
                 self.advance()

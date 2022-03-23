@@ -29,11 +29,12 @@ TOK_GTE         = 'GREATERTHANEQTO'
 TOK_LT          = 'LESSTHAN'
 TOK_LTE         = 'LESSTHANEQTO'
 
+TOK_ARROW       = 'ARROW'
+TOK_COMMA       = 'COMMA' 
 
 #! Dict for the Operator
 OP_TOK_TAG = {
     '+'     : 'ADD',
-    '-'     : 'SUB',
     '/'     : 'DIV',
     '*'     : 'MUL',
     '{'     : 'LBRACKET',
@@ -56,7 +57,8 @@ KEYWORDS = [
     'for',
     'to',
     'step',
-    'while'
+    'while',
+    'func'
 ]
 
 class Token:

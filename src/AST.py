@@ -76,6 +76,35 @@ class ifNode:
         self.pos_start = self.cases[0][0].pos_start
         self.pos_end = (self.else_case or self.cases[len(self.cases) - 1][0]).pos_end
 
+
+#* Function nodes below this
+class funcDefNode:
+    def __init__(self, func_name_token, arg_name_tokens ,  body_node):
+        self.func_name_token = func_name_token
+        self.arg_name_tokens = arg_name_tokens
+        self.body_node       = body_node
+
+        if self.func_name_token:
+            self.pos_start = self.func_name_token.pos_start
+        elif len(arg_name_tokens) > 0: 
+            self.pos_start = self.arg_name_tokens[0].pos_start
+        else:
+            self.pos_start = self.body_node.pos_start
+
+        self.pos_end = self.body_node.pos_end
+
+class funcCallNode:
+    def __init__(self, node_to_call , arg_nodes):
+        self.node_to_call = node_to_call
+        self.arg_nodes    = arg_nodes
+
+        self.pos_start = self.node_to_call.pos_start
+
+        if len(arg_nodes) > 0:
+            self.pos_end = self.arg_nodes[len(arg_nodes)  - 1].pos_end
+        else:
+            self.pos_end = self.node_to_call.pos_end
+
 #* Variable Assignment and Access Nodes
 class VarAssignNode:
     def __init__(self, var_name_token, value_node):
