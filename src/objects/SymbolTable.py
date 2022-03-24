@@ -2,10 +2,10 @@
 #! Symbol table class holds the value of the variables respectively in a dict
 
 class SymbolTable:
-    def __init__(self):
+    def __init__(self, parent = None):
         self.symbols = {}
         #* Parent is empty but later on this will store the values of the parent function later on
-        self.parent = None  
+        self.parent = parent  
 
     def get(self,name):
         value = self.symbols.get(name, None) 

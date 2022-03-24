@@ -1,8 +1,11 @@
 from errors.ErrHandler import RTError
 from objects.Numbers import Number
 from wrappers.RTResult import RTResult
-from Tokens import *
 
+from Tokens import *
+from objects.Value import *
+
+from objects.Function import * 
 
 #* Implementation of visitor pattern in the Interpreter class
 #* The python implementation of ast also implements the same approach 
@@ -22,6 +25,47 @@ class Interpreter:
             Number(node.token.value).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
         
+    #* Visit function nodes
+    def visit_funcCallNode(self, node, context):
+        res = RTResult()
+        args = []
+        
+        value_to_call = res.register(self.visit(node.node_to_call , context))
+        if res.error: return res
+        
+        if value_to_call == None: 
+            return res.failure(RTError(
+                node.pos_start, node.pos_end,
+                'Invalid syntax',
+                context
+            ))
+        
+        value_to_call = value_to_call.copy().set_pos(node.pos_start, node.pos_end)
+
+        for arg_node in node.arg_nodes:
+            args.append(res.register(self.visit(arg_node, context)))
+            if res.error: return res 
+        
+        to_pass = Interpreter()
+        return_value = res.register(value_to_call.execute(args, to_pass))
+        if res.error: return res
+        
+        return res.success(return_value)
+        
+    def visit_funcDefNode(self, node, context):
+        res = RTResult()
+
+        func_name = node.func_name_token.value if node.func_name_token.value else None
+        body_node = node.body_node
+        args_names = [arg_name.value for arg_name in node.arg_name_tokens]
+        func_value = Function(func_name, args_names, body_node).set_context(context).set_pos(node.pos_start, node.pos_end)
+
+        if  node.func_name_token:
+            context.symbol_table.set(func_name, func_value)
+
+        return res.success(func_value)
+    
+    #* Visit variable nodes 
     def visit_VarAccessNode(self, node, context):
         res = RTResult()
         #* value = name of the token

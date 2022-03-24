@@ -152,8 +152,9 @@ class Lexer:
 
 global_symbol_table = SymbolTable()
 global_symbol_table.set("NULL", Number(0))
-global_symbol_table.set("Dogru", Number(1))
 global_symbol_table.set("Yanlis", Number(0))
+global_symbol_table.set("Dogru", Number(1))
+
 
 def runLexer(fn, text):
     #* cleans the console
@@ -165,8 +166,7 @@ def runLexer(fn, text):
     tokens, error = lex.lexeme()  #* Returns the tokens  
     if error: return None, error   
 
-    #return tokens, None
-
+    
     #? Sole purpose of the Parser class is to make a Abstract Syntax Tree which will be 
     #? interpreted by our interpreter
     psr = Parser(tokens)  
