@@ -2,7 +2,7 @@ from objects.Value import Value
 from wrappers.RTResult import RTResult
 from helpers.Context import Context
 from objects.SymbolTable import SymbolTable 
-from errors.ErrHandler import RTError
+from errors.ErrHandler import RTError, InvalidSyntaxError
 
 
 class Function(Value):
@@ -12,16 +12,14 @@ class Function(Value):
         self.arg_names = arg_names
         self.body_node = body_node
 
-    def execute(self, args, intrprt):
-        res = RTResult()
-        
+    def execute(self, args, intrprt, res):
         new_context = Context(self.name, self.context, self.pos_start)
         new_context.symbol_table = SymbolTable(new_context.parent.symbol_table)
         
         if len(args) > len(self.arg_names):
             return res.failure(RTError(
                 self.pos_start, self.pos_end,
-                f"{len(args) - len(self.arg_names)} too many args passed into '{self.name}'",
+                f"Too many args passed into '{self.name}', arguments passed: {len(args) - len(self.arg_names)}",
 				self.context
             ))
 
@@ -35,11 +33,19 @@ class Function(Value):
         for i in range(len(args)):
             arg_name  = self.arg_names[i]
             arg_value = args[i]
+
+            if arg_value is None: 
+                return res.failure(RTError(
+                    self.pos_start, self.pos_end,
+                    'Provide correct arguments please',
+                    self.context
+                ))
+
             arg_value.set_context(new_context)
             new_context.symbol_table.set(arg_name, arg_value)
 
         value = res.register(intrprt.visit(self.body_node, new_context))
-
+        
         if res.error: return res
         return res.success(value)
 

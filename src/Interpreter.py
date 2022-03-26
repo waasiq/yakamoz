@@ -1,5 +1,6 @@
 from errors.ErrHandler import RTError
 from objects.Numbers import Number
+from objects.String import String
 from wrappers.RTResult import RTResult
 
 from Tokens import *
@@ -24,6 +25,11 @@ class Interpreter:
         return RTResult().success(            
             Number(node.token.value).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
+
+    def visit_StringNode(self, node, context):
+        return RTResult().success(
+            String(node.token.value).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
         
     #* Visit function nodes
     def visit_funcCallNode(self, node, context):
@@ -47,7 +53,7 @@ class Interpreter:
             if res.error: return res 
         
         to_pass = Interpreter()
-        return_value = res.register(value_to_call.execute(args, to_pass))
+        return_value = res.register(value_to_call.execute(args, to_pass, res))
         if res.error: return res
         
         return res.success(return_value)
@@ -119,7 +125,6 @@ class Interpreter:
             ))
                 
         tokType = node.opToken.type
-        error = None
         if (tokType == TOK_ADD):
             result, error = left.addedTo(right)
         elif(tokType == TOK_DIV):

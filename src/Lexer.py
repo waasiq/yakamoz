@@ -111,6 +111,18 @@ class Lexer:
         
         return Token(TOK_SUB, pos_start = pos_copy, pos_end = self.pos)
 
+    def tokenize_string(self):
+        pos_copy = self.pos.copy()
+        str = ''
+        self.advance()
+
+        while self.currChar != None and self.currChar != "'":
+            str += self.currChar
+            self.advance()
+
+        self.advance()
+        return Token(TOK_STRING, str, pos_copy, self.pos) 
+
     def lexeme(self):
         tokens = []
        
@@ -136,6 +148,8 @@ class Lexer:
                 self.advance()
             elif self.currChar == '-':
                 tokens.append(self.tokenize_minus_or_arrow())
+            elif self.currChar == "'":
+                tokens.append(self.tokenize_string())
             elif OP_TOK_TAG.get(self.currChar) != None:
                 tokens.append(Token(OP_TOK_TAG.get(self.currChar), pos_start=self.pos))
                 self.advance()
@@ -173,7 +187,7 @@ def runLexer(fn, text):
     ast = psr.parse() #* Parser.parse returns us the AST 
     if ast.error: return None, ast.error
 
-
+    
     context = Context('<program>')
     context.symbol_table = global_symbol_table
     intrpt = Interpreter()    

@@ -343,18 +343,21 @@ class Parser:
 
     def atom(self):
         res = ParseResult()
-        error = None
         token = self.currTok
 
         if token.type in (TOK_INT, TOK_FLOAT):
             #* Idea is to return correct response here
             res.register_advancement()
             self.advance() 
-            return NumberNode(token)
+            return res.success(NumberNode(token))
+        elif token.type == TOK_STRING:
+            res.register_advancement()
+            self.advance()
+            return res.success(StringNode(token))
         elif token.type == TOK_IDENTIFIER:
             res.register_advancement()
             self.advance()
-            return VarAccessNode(token)
+            return res.success(VarAccessNode(token))
         elif token.type == TOK_LBRACKET:
             res.register_advancement()
             self.advance()
