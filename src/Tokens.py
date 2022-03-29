@@ -16,8 +16,11 @@ TOK_ADD      = 'ADD'
 TOK_SUB      = 'SUB'
 TOK_POW      = 'POW'
 TOK_EOF      = 'EOF'
+
 TOK_LBRACKET = 'LBRACKET'
 TOK_RBRACKET = 'RBRACKET'
+TOK_LSQUARE  = 'LSQUARE'
+TOK_RSQUARE  = 'RSQUARE'
 
 TOK_IDENTIFIER = 'IDENTIFIER'
 TOK_KEYWORD    = 'KEYWORD'
@@ -42,6 +45,8 @@ OP_TOK_TAG = {
     '}'     : 'RBRACKET',
     '('     : 'LBRACKET',
     ')'     : 'RBRACKET',
+    '['     : 'LSQUARE',
+    ']'     : 'RSQUARE',
     '^'     : 'POW',
 }
 

@@ -13,14 +13,17 @@ factor          : (ADD | SUB) factor
 
 power           : call (POW factor)*
 
-call            : atom (LBRACKET (IDENTIFIER (COMMA IDENTIFIER)*)? RBRACKET)?
+call            : atom (LBRACKET (expr (COMMA expr)*)? RBRACKET)?
 
 atom            : INT | FLOAT | STRING | IDENTIFIER
                 : LBRACKET expr RBRACKET
+                : list-expr
                 : if-expr
                 : for-expr
-                : while-expr
+                : while-expr 
                 : func
+
+list-expr       : LSQUARE (expr (COMMA expr)*)? RSQUARE 
 
 if-expr         : KEYWORD: if expr KEYWORD: then expr
                 |  (KEYWORD: elseif expr KEYWORD: then expr)*

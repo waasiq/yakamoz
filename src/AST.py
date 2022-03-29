@@ -57,7 +57,15 @@ class UnaryOPNode:
         return f'({self.opToken} , {self.node})'
 
 
-#* IF, FOR, WHILE Nodes below this
+#* IF, FOR, WHILE, LIST Nodes below this
+
+class listNode:
+    def __init__(self, element_nodes, pos_start, pos_end):
+        self.element_nodes = element_nodes
+
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+
 class forNode:
     def __init__(self, var_name_node, start_val_node, end_val_node, step_value_node, body_node):
         self.var_name_node       = var_name_node

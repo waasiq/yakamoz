@@ -1,12 +1,12 @@
 from errors.ErrHandler import RTError
-from objects.Numbers import Number
-from objects.String import String
 from wrappers.RTResult import RTResult
-
 from Tokens import *
-from objects.Value import *
 
+from objects.Numbers import *
+from objects.String import *
+from objects.Value import *
 from objects.Function import * 
+from objects.List     import * 
 
 #* Implementation of visitor pattern in the Interpreter class
 #* The python implementation of ast also implements the same approach 
@@ -31,11 +31,24 @@ class Interpreter:
             String(node.token.value).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
         
+    #! Visit list call nodes
+    def visit_listNode(self, node, context):
+        res = RTResult()
+        elements = []
+
+        for element_node in node.element_nodes:
+            elements.append(res.register(self.visit(element_node, context)))
+            if res.error: return res
+
+        return res.success(
+            List(elements).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
+
     #* Visit function nodes
     def visit_funcCallNode(self, node, context):
         res = RTResult()
         args = []
-        
+
         value_to_call = res.register(self.visit(node.node_to_call , context))
         if res.error: return res
         
@@ -177,13 +190,14 @@ class Interpreter:
 
     def visit_forNode(self, node, context):
         res = RTResult()
+        elements = []
 
         start_value = res.register(self.visit(node.start_val_node, context))
         if res.error: return res
 
         end_value = res.register(self.visit(node.end_val_node, context))
         if res.error: return res
-
+     
         if node.step_value_node:
             step_value = res.register(self.visit(node.step_value_node, context))
             if res.error: return res
@@ -202,13 +216,16 @@ class Interpreter:
             context.symbol_table.set(node.var_name_node.value, Number(i))
             i += step_value.value
 
-            res.register(self.visit(node.body_node, context))
+            elements.append(res.register(self.visit(node.body_node, context)))
             if res.error: return res
 
-        return res.success(None)
+        return res.success(
+            List(elements).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
 
     def visit_whileNode(self, node, context):
         res = RTResult()
+        elements = []
 
         while True: 
             condition = res.register(self.visit(node.condition_node, context))
@@ -216,10 +233,13 @@ class Interpreter:
 
             if condition.isTrue() == False: break
 
-            res.register(self.visit(node.body_node, context))
+            elements.append(res.register(self.visit(node.body_node, context)))
             if res.error: return res
 
-        return res.success(None)
+        return res.success(
+            List(elements).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
+        
 
 
     def visit_UnaryOPNode(self, node, context):

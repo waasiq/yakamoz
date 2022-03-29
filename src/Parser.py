@@ -341,6 +341,47 @@ class Parser:
             body_node
         ))
 
+    def list_expr(self):
+        #print('Comes here jaani')
+        res = ParseResult()
+        elements = []
+        pos_start = self.currTok.pos_start.copy()
+
+        if self.currTok.type != TOK_LSQUARE:
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected '['"
+            ))
+
+        res.register_advancement()
+        self.advance()
+
+        if self.currTok.type == TOK_RSQUARE:
+            res.register_advancement()
+            self.advance()
+        else:
+            elements.append(res.register(self.expr()))
+            if res.error: return res
+
+            while self.currTok.type == TOK_COMMA:
+                res.register_advancement()
+                self.advance()
+
+                elements.append(res.register(self.expr()))
+                if res.error: return res
+
+            if self.currTok.type != TOK_RSQUARE:
+                return res.failure(InvalidSyntaxError(
+                    self.currTok.pos_start, self.currTok.pos_end,
+                    "Expected ',' or ']'"
+                ))
+        
+        res.register_advancement()
+        self.advance()
+
+        return res.success(listNode(elements, pos_start, self.currTok.pos_end))
+
+
     def atom(self):
         res = ParseResult()
         token = self.currTok
@@ -372,6 +413,10 @@ class Parser:
                     self.currTok.pos_start, self.currTok.pos_end,
                     "Expected ')'"
                 ))
+        elif token.type == TOK_LSQUARE:
+            list_expr = res.register(self.list_expr())
+            if res.error: return res
+            return res.success(list_expr)
         elif token.matches(TOK_KEYWORD, 'if'):
             if_expr = res.register(self.if_expr())
             if res.error: return res
