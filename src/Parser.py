@@ -342,7 +342,6 @@ class Parser:
         ))
 
     def list_expr(self):
-        #print('Comes here jaani')
         res = ParseResult()
         elements = []
         pos_start = self.currTok.pos_start.copy()
@@ -478,7 +477,7 @@ class Parser:
                 res.register_advancement()
                 self.advance()
 
-                return res.success(funcCallNode(atom, arg_nodes))
+            return res.success(funcCallNode(atom, arg_nodes))
             
         return res.success(atom)
 

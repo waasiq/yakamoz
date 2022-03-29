@@ -13,7 +13,8 @@ class List(Value):
         new_list.elements.append(other)
         return new_list, None
 
-    def multed_by(self, other):
+    def multipliedBy(self, other):
+        print('Nigga we reached here')
         if isinstance(other, List):
             new_list = self.copy()
             new_list.elements.extend(other.elements)
@@ -38,7 +39,7 @@ class List(Value):
         return self == other
 
     def copy(self):
-        copy = List(self.elements[:])
+        copy = List(self.elements)
         copy.set_pos(self.pos_start, self.pos_end)
         copy.set_context(self.context)
         return copy

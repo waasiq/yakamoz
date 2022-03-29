@@ -6,10 +6,12 @@ from helpers.Context import Context
 #* Main function import
 from Parser import Parser
 
-from Tokens import *
-from Interpreter import *
-from objects.SymbolTable import *
-from errors.ErrHandler import *
+from Tokens                 import *
+from Interpreter            import *
+from objects.Numbers        import *
+from objects.SymbolTable    import *
+from errors.ErrHandler      import *
+from functions.BuiltInFunc  import *
 
 #! Lexer Main Class
 class Lexer:
@@ -165,17 +167,25 @@ class Lexer:
 #! Run
 
 global_symbol_table = SymbolTable()
-global_symbol_table.set("NULL", Number(0))
-global_symbol_table.set("Yanlis", Number(0))
-global_symbol_table.set("Dogru", Number(1))
+global_symbol_table.set("NULL", Number.null)
+global_symbol_table.set("Yanlis", Number.false)
+global_symbol_table.set("Dogru", Number.true)
+
+global_symbol_table.set("yazdir", BuiltInFunction.print)
+global_symbol_table.set("input", BuiltInFunction.input)
+global_symbol_table.set("input_int", BuiltInFunction.input_int)
+global_symbol_table.set("temizle", BuiltInFunction.clear)
+
+global_symbol_table.set("isNumber", BuiltInFunction.is_number)
+global_symbol_table.set("isString", BuiltInFunction.is_string)
+global_symbol_table.set("isList",BuiltInFunction.is_list)
+global_symbol_table.set("isFunction", BuiltInFunction.is_function)
+
+global_symbol_table.set('ekle', BuiltInFunction.append)
+global_symbol_table.set('cikar', BuiltInFunction.pop)
 
 
-def runLexer(fn, text):
-    #* cleans the console
-    if text == 'cls': 
-        print("\033[H\033[J", end="")
-        return None,None
-    
+def runLexer(fn, text):   
     lex = Lexer(fn , text)
     tokens, error = lex.lexeme()  #* Returns the tokens  
     if error: return None, error   

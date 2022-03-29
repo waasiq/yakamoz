@@ -5,7 +5,7 @@ from Tokens import *
 from objects.Numbers import *
 from objects.String import *
 from objects.Value import *
-from objects.Function import * 
+from functions.Function import * 
 from objects.List     import * 
 
 #* Implementation of visitor pattern in the Interpreter class
@@ -51,23 +51,25 @@ class Interpreter:
 
         value_to_call = res.register(self.visit(node.node_to_call , context))
         if res.error: return res
-        
+        value_to_call = value_to_call.copy().set_pos(node.pos_start, node.pos_end)
+
+        #* Custom error checking
         if value_to_call == None: 
             return res.failure(RTError(
                 node.pos_start, node.pos_end,
                 'Invalid syntax',
                 context
             ))
-        
-        value_to_call = value_to_call.copy().set_pos(node.pos_start, node.pos_end)
-
+     
         for arg_node in node.arg_nodes:
             args.append(res.register(self.visit(arg_node, context)))
             if res.error: return res 
         
         to_pass = Interpreter()
+        
         return_value = res.register(value_to_call.execute(args, to_pass, res))
         if res.error: return res
+        return_value = return_value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
         
         return res.success(return_value)
         
@@ -98,7 +100,7 @@ class Interpreter:
                 context
             ))
         
-        value = value.copy().set_pos(node.pos_start, node.pos_end)
+        value = value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
         return res.success(value)
 
     def visit_VarAssignNode(self, node , context):
