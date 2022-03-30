@@ -20,8 +20,14 @@ class Parser:
             self.currTok = self.tokens[self.tok_indx]
         return self.currTok
 
+    def reverse(self, amount=1):
+        self.tok_indx -= amount
+        if self.tok_indx < len(self.tokens):
+            self.currTok = self.tokens[self.tok_indx]
+        return self.currTok
+        
     def parse(self):
-       res = self.expr()
+       res = self.statements()
        if not res.error and self.currTok.type != TOK_EOF:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
@@ -29,6 +35,75 @@ class Parser:
             ))
        return res
 
+    def statements(self):
+        res = ParseResult()
+        statements = []
+        pos_start = self.currTok.pos_start.copy()
+
+        while self.currTok.type == TOK_NEWLINE:
+            res.register_advancement()
+            self.advance()
+
+        statement = res.register(self.statement())
+        if res.error: return res
+        statements.append(statement)
+
+        more_statements = True
+
+        while True:
+            newline_count = 0
+            while self.currTok.type == TOK_NEWLINE:
+                res.register_advancement()
+                self.advance()
+                newline_count += 1
+            if newline_count == 0:
+                more_statements = False
+            
+            if not more_statements: break
+            statement = res.try_register(self.statement())
+            if not statement:
+                self.reverse(res.to_reverse_count)
+                more_statements = False
+                continue
+            statements.append(statement)
+
+        return res.success(listNode(
+            statements,
+            pos_start,
+            self.currTok.pos_end.copy()
+        ))
+
+    def statement(self):
+        res = ParseResult()
+        pos_start = self.currTok.pos_start.copy()
+
+        if self.currTok.matches(TOK_KEYWORD, 'return'):
+            res.register_advancement()
+            self.advance()
+
+            expr = res.try_register(self.expr())
+            if not expr:  self.reverse(res.to_reverse_count)
+            return res.success(ReturnNode(expr, pos_start, self.currTok.pos_start.copy()))
+
+        if self.currTok.matches(TOK_KEYWORD, 'continue'):
+            res.register_advancement()
+            self.advance()
+            return res.success(ContinueNode(pos_start,self.currTok.pos_start.copy()))
+        
+        if self.currTok.matches(TOK_KEYWORD, 'break'):
+            res.register_advancement()
+            self.advance()
+            return res.success(BreakNode(pos_start, self.currTok.pos_start.copy()))
+        
+        expr = res.register(self.expr())
+        if res.error: 
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                "Expected 'oyleki', 'if', 'for', 'while', 'fun', int, float, identifier, '+', '-', '(', '[' or 'not'"
+            ))
+
+        return res.success(expr)
+        
     #? Chained function working:
     #? Expression runs binaryOP which runs Term which runs binaryOP which runs factor.
     
@@ -88,63 +163,113 @@ class Parser:
 
     def if_expr(self):
         res = ParseResult()
-        cases = []
-        else_case = None
-
-        if self.currTok.matches(TOK_KEYWORD, 'if') == False:
-            return res.failure(InvalidSyntaxError(
-                self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'if' keyword"
-            ))
-        
-
-        res.register_advancement()
-        self.advance()
-        
-        condition = res.register(self.expr()) 
+        all_cases = res.register(self.if_expr_cases('if'))
         if res.error: return res
-
-        if not self.currTok.matches(TOK_KEYWORD, 'then'):
-            return res.failure(InvalidSyntaxError(
-                self.currTok.pos_start, self.currTok.pos_end,
-                f"Expected 'then'"
-            ))
-
-        res.register_advancement()
-        self.advance()
-        
-        expr  = res.register(self.expr())         
-        if res.error: return res
-        cases.append((condition, expr))
+        cases, else_case = all_cases
+        return res.success(ifNode(cases, else_case))
     
-        while self.currTok.matches(TOK_KEYWORD, 'elseif'):
-            res.register_advancement()
-            self.advance()
-
-            condition = res.register(self.expr())
-            if res.error: return res
-
-            if not self.currTok.matches(TOK_KEYWORD, 'then'):
-                return res.failure(InvalidSyntaxError(
-                self.currTok.pos_start, self.currTok.pos_end,
-                f"Expected 'then'"
-                ))
-
-            res.register_advancement()
-            self.advance()
-
-            expr = res.register(self.expr())
-            if res.error: return res
-            cases.append((condition, expr)) 
+    
+    def if_expr_b(self):
+        return self.if_expr_cases('elseif')
+    
+    def if_expr_c(self):
+        res = ParseResult()
+        else_case = None
 
         if self.currTok.matches(TOK_KEYWORD, 'else'):
             res.register_advancement()
             self.advance()
 
-            else_case = res.register(self.expr())
-            if res.error: return res
+            if self.currTok.type == TOK_NEWLINE:
+                res.register_advancement()
+                self.advance()
 
-        return res.success(ifNode(cases, else_case))
+                statements = res.register(self.statements())
+                if res.error: return res
+                else_case = (statements, True)
+
+                if self.currTok.matches(TOK_KEYWORD, 'end'):
+                    res.register_advancement()
+                    self.advance()
+                else:
+                    return res.failure(InvalidSyntaxError(
+                        self.currTok.pos_start, self.currTok.pos_end,
+                        "Expected 'end'"
+                    ))
+            else:
+                expr = res.register(self.statement())
+                if res.error: return res
+                else_case = (expr, False)
+
+        return res.success(else_case)
+
+    def if_expr_b_or_c(self):
+        res = ParseResult()
+        cases, else_case = [], None
+
+        if self.currTok.matches(TOK_KEYWORD, 'elseif'):
+            all_cases = res.register(self.if_expr_b())
+            if res.error: return res
+            cases, else_case = all_cases
+        else:
+            else_case = res.register(self.if_expr_c())
+            if res.error: return res
+        
+        return res.success((cases, else_case))
+    
+    def if_expr_cases(self, case_keyword):
+        res = ParseResult()
+        cases = []
+        else_case = None
+
+        if not self.currTok.matches(TOK_KEYWORD, case_keyword):
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                f"Expected '{case_keyword}'"
+            ))
+
+        res.register_advancement()
+        self.advance()
+
+        condition = res.register(self.expr())
+        if res.error: return res
+
+        if not self.currTok.matches(TOK_KEYWORD, 'then'):
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                f"Expected 'THEN'"
+            ))
+
+        res.register_advancement()
+        self.advance()
+
+        if self.currTok.type == TOK_NEWLINE:
+            res.register_advancement()
+            self.advance()
+
+            statements = res.register(self.statements())
+            if res.error: return res
+            cases.append((condition, statements, True))
+
+            if self.currTok.matches(TOK_KEYWORD, 'END'):
+                res.register_advancement()
+                self.advance()
+            else:
+                all_cases = res.register(self.if_expr_b_or_c())
+                if res.error: return res
+                new_cases, else_case = all_cases
+                cases.extend(new_cases)
+        else:
+            expr = res.register(self.statement())
+            if res.error: return res
+            cases.append((condition, expr, False))
+
+        all_cases = res.register(self.if_expr_b_or_c())
+        if res.error: return res
+        new_cases, else_case = all_cases
+        cases.extend(new_cases)
+
+        return res.success((cases, else_case))
 
     #! While expression
     def while_expr(self):

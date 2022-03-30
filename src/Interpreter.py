@@ -174,21 +174,22 @@ class Interpreter:
     def visit_ifNode(self, node, context):
         res = RTResult()
         
-        for condition, expr in node.cases:
+        for condition, expr, should_return_null  in node.cases:
             condition_val = res.register(self.visit(condition, context))
             if res.error: return res
 
             if condition_val.isTrue():
-                expr_val = res.register(self.visit(expr, context))
+                expr_value = res.register(self.visit(expr, context))
                 if res.error: return res
-                return res.success(expr_val)
+                return res.success(Number.null if should_return_null else expr_value)
 
-        if node.else_case: 
-                else_val = res.register(self.visit(node.else_case, context))
-                if res.error: return res
-                return res.success(else_val)
+        if node.else_case:
+            expr, should_return_null = node.else_case
+            expr_value = res.register(self.visit(expr, context))
+            if res.error: return res
+            return res.success(Number.null if should_return_null else expr_value)
 
-        return res.success(None)
+        return res.success(Number.null)
 
     def visit_forNode(self, node, context):
         res = RTResult()

@@ -3,7 +3,7 @@ class RTResult:
         self.value = None
         self.error = None
 
-    def register(self,res):
+    def register(self, res):
         if res.error: res.error = self.error
         return res.value
     

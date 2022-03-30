@@ -36,6 +36,12 @@ TOK_LTE         = 'LESSTHANEQTO'
 TOK_ARROW       = 'ARROW'
 TOK_COMMA       = 'COMMA' 
 
+TOK_NEWLINE     = 'NEWLINE'
+
+TOK_BREAK       = 'BREAK'
+TOK_RETURN      = 'RETURN'
+TOK_CONTINUE    = 'CONTINUE'
+
 #! Dict for the Operator
 OP_TOK_TAG = {
     '+'     : 'ADD',
@@ -64,7 +70,10 @@ KEYWORDS = [
     'to',
     'step',
     'while',
-    'func'
+    'func', 
+    'return',
+    'continue',
+    'break'
 ]
 
 class Token:

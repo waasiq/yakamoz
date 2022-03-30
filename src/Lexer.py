@@ -131,6 +131,9 @@ class Lexer:
         while self.currChar != None:   
             if self.currChar in ' \t':
                 self.advance()
+            elif self.currChar in ';\n':
+                tokens.append(Token(TOK_NEWLINE, pos_start=self.pos))
+                self.advance()
             elif self.currChar in DIGITS:
                 tokens.append(self.tokenize_num())
             elif self.currChar in LETTERS:
@@ -190,14 +193,13 @@ def runLexer(fn, text):
     tokens, error = lex.lexeme()  #* Returns the tokens  
     if error: return None, error   
 
-    
     #? Sole purpose of the Parser class is to make a Abstract Syntax Tree which will be 
     #? interpreted by our interpreter
     psr = Parser(tokens)  
     ast = psr.parse() #* Parser.parse returns us the AST 
     if ast.error: return None, ast.error
 
-    
+   
     context = Context('<program>')
     context.symbol_table = global_symbol_table
     intrpt = Interpreter()    

@@ -1,3 +1,11 @@
+
+statements      : NEWLINE* statement (NEWLINE+ statement)* NEWLINE*
+
+statement       : KEYWORD: return expr?
+                : KEYWORD: continue
+                : KEYWORD: break
+                : expr
+
 expr            : KEYWORD: oyleki IDENTIFIER EQUALS expr
                 : comp-expr ((KEYWORD: AND | KEYWORD: OR) comp-expr)*
 
@@ -25,11 +33,19 @@ atom            : INT | FLOAT | STRING | IDENTIFIER
 
 list-expr       : LSQUARE (expr (COMMA expr)*)? RSQUARE 
 
-if-expr         : KEYWORD: if expr KEYWORD: then expr
-                |  (KEYWORD: elseif expr KEYWORD: then expr)*
-                |  (KEYWORD: else expr) ?
+if-expr         : KEYWORD: if statement KEYWORD: then
+                  (statement if-expr-b|if-expr-c?)
+                | (NEWLINE statements KEYWORD:END|if-expr-b|if-expr-c)
 
-for-expr        : KEYWORD: for IDENTIFIER EQ expr KEYWORD: to expr
+if-expr-b       : KEYWORD:ELIF statement KEYWORD:THEN
+                  (statement if-expr-b| if-expr-c?)
+                | (NEWLINE statements KEYWORD:END | if-expr-b | if-expr-c)
+
+if-expr-c       : KEYWORD:ELSE
+                  statement
+                | (NEWLINE statements KEYWORD:END)
+
+for-expr        : KEYWORD: for IDENTIFIER EQ statement KEYWORD: to expr
                 | (STEP expr)?
                 | KEYWORD: then expr
 
