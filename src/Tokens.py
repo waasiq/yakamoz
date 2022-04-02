@@ -42,6 +42,8 @@ TOK_BREAK       = 'BREAK'
 TOK_RETURN      = 'RETURN'
 TOK_CONTINUE    = 'CONTINUE'
 
+TOK_END         = 'END'
+
 #! Dict for the Operator
 OP_TOK_TAG = {
     '+'     : 'ADD',
@@ -73,7 +75,8 @@ KEYWORDS = [
     'func', 
     'return',
     'continue',
-    'break'
+    'break',
+    'end'
 ]
 
 class Token:

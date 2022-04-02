@@ -296,11 +296,29 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        body = res.register(self.expr())
+        if self.currTok.type == TOK_NEWLINE:
+            res.register_advancement()
+            self.advance()
+
+            body = res.register(self.statements())
+            if res.error: return res
+
+            if not self.currTok.matches(TOK_KEYWORD, 'end'):
+                return res.failure(InvalidSyntaxError(
+                     self.currTok.pos_start, self.currTok.pos_end,
+                    f"Expected 'end'"
+                ))
+
+            res.register_advancement()
+            self.advance()
+
+            return res.success(whileNode(condition, body, True))
+            
+        body = res.register(self.statement())
         if res.error: return res
 
-        return res.success(whileNode(condition , body))
-
+        return res.success(whileNode(condition, body, False))
+        
     #! For expression
     def for_expr(self):
         res = ParseResult()
@@ -368,10 +386,23 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        body = res.register(self.expr())
+        if self.currTok.type == TOK_NEWLINE:
+            res.register_advancement()
+            self.advance()
+
+        body = res.register(self.statements())
         if res.error: return res
-        
-        return res.success(forNode(var_name, first_expr, second_expr, step_value, body))
+
+        if not self.currTok.matches(TOK_KEYWORD, 'end'):
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                f"Expected 'end'"
+            ))
+
+        res.register_advancement()
+        self.advance()
+
+        return res.success(forNode(var_name, first_expr, second_expr, step_value, body, True))
 
     #!Function define parser
     def func_def(self):
@@ -405,7 +436,7 @@ class Parser:
             if self.currTok.type != TOK_LBRACKET:
                return res.failure(InvalidSyntaxError(
                    self.currTok.pos_start, self.currTok.pos_end, 
-                   'Expected left racket'
+                   'Expected ('
                ))
 
         res.register_advancement()
@@ -428,8 +459,8 @@ class Parser:
                         self.currTok.pos_start, self.currTok.pos_end,
                         'Expected an identifier'
                     ))
-                arg_name_tokens.append(self.currTok)
 
+                arg_name_tokens.append(self.currTok)
                 res.register_advancement()
                 self.advance()
 
@@ -438,32 +469,50 @@ class Parser:
                     self.currTok.pos_start, self.currTok.pos_end,
                     'Expected ) identifier'
                 ))
-      
-        if self.currTok.type != TOK_RBRACKET:
-            return res.failure(InvalidSyntaxError(
-                self.currTok.pos_start, self.currTok.pos_end,
-                'Expected ) identifier'
-            ))
+        else:
+            if self.currTok.type != TOK_RBRACKET:
+                return res.failure(InvalidSyntaxError(
+                    self.currTok.pos_start, self.currTok.pos_end,
+                    'Expected ) identifier'
+                ))
     
         res.register_advancement()
         self.advance()
 
-        if self.currTok.type != TOK_ARROW:
-            return res.failure(InvalidSyntaxError(
-                self.currTok.pos_start, self.currTok.pos_end,
-                'Expected -> identifier'
+        if self.currTok.type == TOK_ARROW:
+            res.register_advancement()
+            self.advance()
+
+            body = res.register(self.expr())
+            if res.error: return res
+
+            return res.success(funcDefNode(
+                var_name_token,
+                arg_name_tokens,
+                body,
+                True
             ))
 
+        #res.register_advancement()
+        #self.advance()
+
+        if self.currTok.type != TOK_NEWLINE:
+            return res.failure(InvalidSyntaxError(
+            self.currTok.pos_start, self.currTok.pos_end,
+            f"Expected '->' or NEWLINE"
+        ))
+        
         res.register_advancement()
         self.advance()
-
-        body_node = res.register(self.expr())
+        
+        body = res.register(self.statements())
         if res.error: return res
 
         return res.success(funcDefNode(
             var_name_token,
             arg_name_tokens,
-            body_node
+            body,
+            False
         ))
 
     def list_expr(self):

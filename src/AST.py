@@ -67,21 +67,23 @@ class listNode:
         self.pos_end = pos_end
 
 class forNode:
-    def __init__(self, var_name_node, start_val_node, end_val_node, step_value_node, body_node):
+    def __init__(self, var_name_node, start_val_node, end_val_node, step_value_node, body_node, should_return_null):
         self.var_name_node       = var_name_node
         self.start_val_node      = start_val_node        
         self.end_val_node        = end_val_node
         self.step_value_node     = step_value_node
         self.body_node           = body_node
+        self.should_return_null  = should_return_null
 
         self.pos_start      = self.var_name_node.pos_start
         self.pos_end        = self.body_node.pos_end
 
 class whileNode:
-        def __init__(self, condition_node, body_node):
+        def __init__(self, condition_node, body_node, should_return_null):
             self.condition_node       = condition_node
             self.body_node            = body_node
-
+            self.should_return_null   = should_return_null
+            
             self.pos_start      = self.condition_node.pos_start
             self.pos_end        = self.body_node.pos_end
 
@@ -96,10 +98,11 @@ class ifNode:
 
 #* Function nodes below this
 class funcDefNode:
-    def __init__(self, func_name_token, arg_name_tokens ,  body_node):
-        self.func_name_token = func_name_token
-        self.arg_name_tokens = arg_name_tokens
-        self.body_node       = body_node
+    def __init__(self, func_name_token, arg_name_tokens ,  body_node, should_auto_return):
+        self.func_name_token    = func_name_token
+        self.arg_name_tokens    = arg_name_tokens
+        self.body_node          = body_node
+        self.should_auto_return = should_auto_return
 
         if self.func_name_token:
             self.pos_start = self.func_name_token.pos_start
