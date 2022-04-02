@@ -194,8 +194,8 @@ global_symbol_table.set("isString", BuiltInFunction.is_string)
 global_symbol_table.set("isList",BuiltInFunction.is_list)
 global_symbol_table.set("isFunction", BuiltInFunction.is_function)
 
-global_symbol_table.set('ekle', BuiltInFunction.append)
-global_symbol_table.set('cikar', BuiltInFunction.pop)
+global_symbol_table.set("ekle",  BuiltInFunction.append)
+global_symbol_table.set("cikar", BuiltInFunction.pop)
 
 #global_symbol_table.set('getElement', BuiltInFunction.getElement)
 #global_symbol_table.set('len', BuiltInFunction.len)

@@ -1,4 +1,5 @@
-import Lexer as lx 
+
+import Lexer as lx
 
 while (True):
     text = input('yakamoz >>> ')

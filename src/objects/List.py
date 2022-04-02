@@ -35,7 +35,10 @@ class List(Value):
             return None, Value.illegal_operation(self, other)
 
     def compares_to(self,other):
-        return self == other
+        return Number.true if self == other else Number.false, None
+
+    def not_equal(self, other):
+        return Number.false if self == other else Number.true, None
 
     def copy(self):
         copy = List(self.elements)
