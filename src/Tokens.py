@@ -7,15 +7,17 @@ LETTERS = string.ascii_letters
 LETTERS_DIGITS = LETTERS + DIGITS
 
 #! TOKEN
-TOK_INT      = 'INT'
-TOK_FLOAT    = 'FLOAT'
-TOK_STRING   = 'STRING'
-TOK_MUL      = 'MUL'
-TOK_DIV      = 'DIV'
-TOK_ADD      = 'ADD'
-TOK_SUB      = 'SUB'
-TOK_POW      = 'POW'
-TOK_EOF      = 'EOF'
+TOK_INT       = 'INT'
+TOK_FLOAT     = 'FLOAT'
+TOK_STRING    = 'STRING'
+
+TOK_MUL       = 'MUL'
+TOK_DIV       = 'DIV'
+TOK_ADD       = 'ADD'
+TOK_SUB       = 'SUB'
+TOK_POW       = 'POW'
+TOK_EOF       = 'EOF'
+TOK_REMAINDER = 'REMAINDER'
 
 TOK_LBRACKET = 'LBRACKET'
 TOK_RBRACKET = 'RBRACKET'
@@ -56,6 +58,7 @@ OP_TOK_TAG = {
     '['     : 'LSQUARE',
     ']'     : 'RSQUARE',
     '^'     : 'POW',
+    '%'     : 'REMAINDER'
 }
 
 #! A list of the keywords for yakamoz
@@ -64,10 +67,12 @@ KEYWORDS = [
     'yoket',
     've',
     'veya',
+
     'if',
     'then',
     'elseif',
     'else',
+
     'for',
     'to',
     'step',
@@ -80,9 +85,6 @@ KEYWORDS = [
 ]
 
 class Token:
-    #* Example can be 
-    #* type_ = INTEGER
-    #* value = 10
     def __init__(self, type_ , value=None , pos_start=None , pos_end=None):
         self.type = type_
         self.value = value

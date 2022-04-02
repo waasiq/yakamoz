@@ -14,7 +14,6 @@ class List(Value):
         return new_list, None
 
     def multipliedBy(self, other):
-        print('Nigga we reached here')
         if isinstance(other, List):
             new_list = self.copy()
             new_list.elements.extend(other.elements)

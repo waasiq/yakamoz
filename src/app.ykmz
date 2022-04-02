@@ -1,0 +1,20 @@
+
+func writeWow() -> yazdir('Hello World')
+
+
+oyleki a = 101
+oyleki b = 110 
+
+if b == 10 ve a == 5 then
+    yazdir('Hello')
+else 
+    yazdir('Now is this working?')
+end
+
+oyleki a = 10 
+oyleki b = 2
+
+
+func powerToTwo(number)
+    return number ^ 2
+end

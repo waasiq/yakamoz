@@ -6,6 +6,7 @@ from objects.List       import List
 
 import os
 
+import Lexer as lx
 class BuiltInFunction(BaseFunction):
     def __init__(self, name):
         super().__init__(name)
@@ -91,14 +92,44 @@ class BuiltInFunction(BaseFunction):
 
         if not isinstance(list_, List):
             return RTResult().failure(RTError(
-            self.pos_start, self.pos_end,
-            "First argument must be list",
-            exec_ctx
+                self.pos_start, self.pos_end,
+                "First argument must be list",
+                exec_ctx
             ))
 
         list_.elements.append(value)
         return RTResult().success(Number.null)
     execute_append.arg_names = ["list", "value"]
+
+    def execute_getElement(self, exec_ctx):
+        list_ = exec_ctx.symbol_table.get("list")
+        index = exec_ctx.symbol_table.get("index")
+        
+        if not isinstance(list_, List):
+            return RTResult().failure(RTError(
+                self.pos_start, self.pos_end,
+                "First argument must be list",
+                exec_ctx
+            ))
+        
+        if not isinstance(index, Number):
+            return RTResult().failure(RTError(
+            self.pos_start, self.pos_end,
+            "Second argument must be number",
+            exec_ctx
+        ))
+
+        try:
+             element = list_[index]
+        except:
+            return RTResult().failure(RTError(
+                self.pos_start, self.pos_end,
+                'Index out of bounds',
+                exec_ctx
+            ))
+
+        return RTResult().success(element)
+    execute_append.arg_names = ["list", "index"]
 
     def execute_pop(self, exec_ctx):
         list_ = exec_ctx.symbol_table.get("list")
@@ -129,6 +160,53 @@ class BuiltInFunction(BaseFunction):
         return RTResult().success(element)
     execute_pop.arg_names = ["list", "index"]
 
+    def execute_len(self, exec_ctx):
+        list_ = exec_ctx.symbol_table.get("list")
+
+        if not isinstance(list_, List):
+            return RTResult().failure(RTError(
+                self.pos_start, self.pos_end,
+                "Argument must be list",
+                exec_ctx
+            ))
+
+        return RTResult().success(Number(len(list_.elements)))
+    execute_len.arg_names = ["list"]
+
+    def execute_run(self, exec_cntx):
+        fn = exec_cntx.symbol_table.get("fn")
+
+        if not isinstance(fn, String):
+            return RTResult().failure(RTError(
+                self.pos_start, self.pos_end,
+                "Argument must be string",
+                exec_cntx
+            ))
+
+        fn = fn.value
+
+        try:
+            with open(fn, 'r') as f:
+                script = f.read()
+        except Exception as e:
+            return RTResult().failure(RTError(
+                self.pos_start, self.pos_end,
+                f'Failed to load script \"{fn}\"\nError: {e}',
+                exec_cntx
+            ))
+       
+        _ , error = lx.runLexer(fn, script)
+
+        if error:
+            return RTResult().failure(RTError(
+                self.pos_start, self.pos_end,
+                f"Failed to finish executing script \"{fn}\"\nError: {error}" + 
+                error.toStr(),
+                exec_cntx
+            ))
+        return RTResult().success(Number.null)
+    execute_run.arg_names = ['fn']
+
 BuiltInFunction.print       =  BuiltInFunction('print')
 BuiltInFunction.clear       =  BuiltInFunction('clear')
 
@@ -142,5 +220,7 @@ BuiltInFunction.is_function =  BuiltInFunction('is_function')
 
 BuiltInFunction.append      = BuiltInFunction("append")
 BuiltInFunction.pop         = BuiltInFunction("pop")
+BuiltInFunction.run         = BuiltInFunction("run")
+BuiltInFunction.getElement  = BuiltInFunction('getElement')
 
     

@@ -43,6 +43,12 @@ class Number(Value):
         else: 
             return None, Value.illegal_operation(self,other)
     
+    def remainder(self, other):
+        if isinstance(other, Number):
+            return Number(self.value % other.value).set_context(self.context) , None
+        else: 
+            return None, Value.illegal_operation(self,other)
+
     #* Comparison operators class
     def greater_than(self , other):
         if isinstance(other, Number):
@@ -75,7 +81,8 @@ class Number(Value):
             return Number(0).set_context(self.context) , None
         else: 
             return None, Value.illegal_operation(self,other)
-    
+
+
     def compares_to(self,other):
         if isinstance(other, Number):
             if self.value ==  other.value:

@@ -136,7 +136,7 @@ class Parser:
             if res.error: return res 
             return res.success(UnaryOPNode(opTOK, node))
 
-        node = res.register(self.binaryOP(self.arith_expr, (TOK_DEQUAL, TOK_NTEQUAL , TOK_GT, TOK_GTE, TOK_LTE, TOK_LT)))
+        node = res.register(self.binaryOP(self.arith_expr, (TOK_DEQUAL,TOK_REMAINDER, TOK_NTEQUAL , TOK_GT, TOK_GTE, TOK_LTE, TOK_LT)))
 
         if res.error: 
             return res.failure(InvalidSyntaxError(
@@ -175,12 +175,13 @@ class Parser:
     def if_expr_c(self):
         res = ParseResult()
         else_case = None
-
+        
         if self.currTok.matches(TOK_KEYWORD, 'else'):
             res.register_advancement()
             self.advance()
-
+            
             if self.currTok.type == TOK_NEWLINE:
+            
                 res.register_advancement()
                 self.advance()
 
@@ -188,6 +189,7 @@ class Parser:
                 if res.error: return res
                 else_case = (statements, True)
 
+               
                 if self.currTok.matches(TOK_KEYWORD, 'end'):
                     res.register_advancement()
                     self.advance()
@@ -237,7 +239,7 @@ class Parser:
         if not self.currTok.matches(TOK_KEYWORD, 'then'):
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                f"Expected 'THEN'"
+                f"Expected 'then'"
             ))
 
         res.register_advancement()
@@ -251,7 +253,7 @@ class Parser:
             if res.error: return res
             cases.append((condition, statements, True))
 
-            if self.currTok.matches(TOK_KEYWORD, 'END'):
+            if self.currTok.matches(TOK_KEYWORD, 'end'):
                 res.register_advancement()
                 self.advance()
             else:
@@ -264,12 +266,15 @@ class Parser:
             if res.error: return res
             cases.append((condition, expr, False))
 
-        all_cases = res.register(self.if_expr_b_or_c())
-        if res.error: return res
-        new_cases, else_case = all_cases
-        cases.extend(new_cases)
-
+            all_cases = res.register(self.if_expr_b_or_c())
+            if res.error: return res
+            new_cases, else_case = all_cases
+            cases.extend(new_cases)
+        
         return res.success((cases, else_case))
+
+
+
 
     #! While expression
     def while_expr(self):
@@ -493,8 +498,6 @@ class Parser:
                 True
             ))
 
-        #res.register_advancement()
-        #self.advance()
 
         if self.currTok.type != TOK_NEWLINE:
             return res.failure(InvalidSyntaxError(
@@ -508,6 +511,15 @@ class Parser:
         body = res.register(self.statements())
         if res.error: return res
 
+        if not self.currTok.matches(TOK_KEYWORD, 'end'):
+            return res.failure(InvalidSyntaxError(
+                self.currTok.pos_start, self.currTok.pos_end,
+                f"Expected 'end'"
+        ))
+
+        res.register_advancement()
+        self.advance()
+        
         return res.success(funcDefNode(
             var_name_token,
             arg_name_tokens,
@@ -633,7 +645,7 @@ class Parser:
                 if res.error:
                     return res.failure(InvalidSyntaxError(
 						self.currTok.pos_start, self.currTok.pos_end,
-						"Expected ')', 'VAR', 'IF', 'FOR', 'WHILE', 'FUN', int, float, identifier, '+', '-', '(' or 'NOT'"
+						"Expected ')', 'oyleki', 'if', 'for', 'while', 'func', int, float, identifier, '+', '-', '(' or 'NOT'"
 					))
                 
                 while self.currTok.type == TOK_COMMA: 

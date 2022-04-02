@@ -125,12 +125,22 @@ class Lexer:
         self.advance()
         return Token(TOK_STRING, str, pos_copy, self.pos) 
 
+    def skip_comment(self):
+        self.advance()
+
+        while self.currChar != '\n':
+            self.advance()
+        
+        self.advance()
+
     def lexeme(self):
         tokens = []
        
         while self.currChar != None:   
             if self.currChar in ' \t':
                 self.advance()
+            #elif self.currChar == '#':
+            #    self.skip_comment()
             elif self.currChar in ';\n':
                 tokens.append(Token(TOK_NEWLINE, pos_start=self.pos))
                 self.advance()
@@ -187,8 +197,16 @@ global_symbol_table.set("isFunction", BuiltInFunction.is_function)
 global_symbol_table.set('ekle', BuiltInFunction.append)
 global_symbol_table.set('cikar', BuiltInFunction.pop)
 
+#global_symbol_table.set('getElement', BuiltInFunction.getElement)
+#global_symbol_table.set('len', BuiltInFunction.len)
+global_symbol_table.set('run', BuiltInFunction.run)
+
 
 def runLexer(fn, text):   
+    if text == 'cls': 
+        print("\033[H\033[J", end="")
+        return None,None
+
     lex = Lexer(fn , text)
     tokens, error = lex.lexeme()  #* Returns the tokens  
     if error: return None, error   
@@ -205,5 +223,4 @@ def runLexer(fn, text):
     intrpt = Interpreter()    
     result = intrpt.visit(ast.node, context) #* ast.node -> Head node
 
-    #print(context.symbol_table.symbols)
     return  result.value, result.error

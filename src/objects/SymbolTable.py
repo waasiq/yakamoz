@@ -4,7 +4,6 @@
 class SymbolTable:
     def __init__(self, parent = None):
         self.symbols = {}
-        #* Parent is empty but later on this will store the values of the parent function later on
         self.parent = parent  
 
     def get(self,name):

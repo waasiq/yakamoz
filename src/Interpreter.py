@@ -162,6 +162,8 @@ class Interpreter:
             result, error = left.compares_to(right)
         elif(tokType == TOK_NTEQUAL):
             result, error = left.not_equal(right)
+        elif(tokType == TOK_REMAINDER):
+            result, error = left.remainder(right)
         elif(node.opToken.matches(TOK_KEYWORD, 've')):
             result, error = left.anded_by(right)
         elif(node.opToken.matches(TOK_KEYWORD, 'veya')):
