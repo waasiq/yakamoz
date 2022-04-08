@@ -1,12 +1,12 @@
-from errors.ErrHandler import RTError
-from wrappers.RTResult import RTResult
-from Tokens import *
+from Errors.ErrHandler import RTError
+from Wrappers.RTResult import RTResult
+from Lib.Tokens             import *
 
-from objects.Numbers import *
-from objects.String import *
-from objects.Value import *
-from functions.Function import * 
-from objects.List     import * 
+from Objects.Numbers    import *
+from Objects.String     import *
+from Objects.Value      import *
+from Funcs.Function     import * 
+from Objects.List       import * 
 
 #* Implementation of visitor pattern in the Interpreter class
 #* The python implementation of ast also implements the same approach 

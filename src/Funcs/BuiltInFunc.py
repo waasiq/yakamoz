@@ -1,12 +1,12 @@
 
-from functions.BaseFunc import * 
-from objects.Numbers    import Number
-from objects.String     import String
-from objects.List       import List
+from Funcs.BaseFunc     import * 
+from Objects.Numbers    import Number
+from Objects.String     import String
+from Objects.List       import List
 
 import os
 
-import Lexer as lx
+import Lib.Lexer as lx
 class BuiltInFunction(BaseFunction):
     def __init__(self, name):
         super().__init__(name)

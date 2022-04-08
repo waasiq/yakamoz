@@ -1,6 +1,6 @@
 
-from errors.ErrHandler import RTError
-from wrappers.RTResult import RTResult
+from Errors.ErrHandler import RTError
+from Wrappers.RTResult import RTResult
 
 class Value:
     def __init__(self):

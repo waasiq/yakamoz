@@ -1,7 +1,7 @@
 
-from errors.ErrHandler import RTError
-from objects.Value   import Value
-from objects.Numbers import Number
+from Errors.ErrHandler import RTError
+from Objects.Value     import Value
+from Objects.Numbers   import Number
 
 class List(Value):
     def __init__(self, elements):

@@ -1,5 +1,5 @@
-from errors.ErrHandler import RTError
-from objects.Value import Value
+from Errors.ErrHandler import RTError
+from Objects.Value     import Value
 
 class Number(Value):
     def __init__(self, value):

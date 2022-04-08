@@ -1,11 +1,11 @@
-from errors.ErrHandler import InvalidSyntaxError 
+from Errors.ErrHandler import InvalidSyntaxError 
 
 #* ParseResult contains the node and error and the Parse is actually wrapped around
 #* the Parse Class for error checking
-from wrappers.ParseResult import ParseResult
+from Wrappers.ParseResult import ParseResult
 
-from AST import *
-from Tokens import *
+from Lib.AST import *
+from Lib.Tokens import *
 
 #! Parse result
 class Parser:

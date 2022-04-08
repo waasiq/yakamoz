@@ -1,4 +1,4 @@
-import errors.strArrows as sArrow
+import Errors.strArrows as sArrow
 
 #* Error Handling Classes  
 class Error:

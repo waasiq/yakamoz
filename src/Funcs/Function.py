@@ -1,7 +1,7 @@
 
-from functions.BaseFunc import BaseFunction
-from wrappers.RTResult import RTResult
-from objects.Numbers import Number
+from Funcs.BaseFunc import BaseFunction
+from Wrappers.RTResult import RTResult
+from Objects.Numbers import Number
 
 class Function(BaseFunction):
     def __init__(self, name, arg_names, body_node, should_auto_return):

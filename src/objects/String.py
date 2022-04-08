@@ -1,7 +1,7 @@
 
-from tokenize import Number
-from objects.Value import Value 
-from objects.Numbers import Number
+from tokenize        import Number
+from Objects.Value   import Value 
+from Objects.Numbers import Number
 
 class String(Value):
     def __init__(self, value):

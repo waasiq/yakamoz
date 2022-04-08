@@ -1,8 +1,8 @@
 
-from functions.Function     import *
-from helpers.Context        import *
-from objects.SymbolTable    import *
-from objects.Value          import *
+from Funcs.Function         import *
+from Helpers.Context        import *
+from Objects.SymbolTable    import *
+from Objects.Value          import *
 
 class BaseFunction(Value):
     def __init__(self, name):

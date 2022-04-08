@@ -1,17 +1,17 @@
 
 #* Helper function import
-import helpers.Position as pos
-from helpers.Context import Context
+import Helpers.Position as pos
+from Helpers.Context    import Context
 
 #* Main function import
-from Parser import Parser
+from Lib.Parser import Parser
 
-from Tokens                 import *
-from Interpreter            import *
-from objects.Numbers        import *
-from objects.SymbolTable    import *
-from errors.ErrHandler      import *
-from functions.BuiltInFunc  import *
+from Lib.Tokens                 import *
+from Lib.Interpreter            import *
+from Objects.Numbers        import *
+from Objects.SymbolTable    import *
+from Errors.ErrHandler      import *
+from Funcs.BuiltInFunc      import *
 
 #! Lexer Main Class
 class Lexer:
