@@ -69,7 +69,9 @@ class Interpreter:
         
         return_value = res.register(value_to_call.execute(args, to_pass, res))
         if res.should_return(): return res
-        return_value = return_value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
+        
+        if return_value != None:
+            return_value = return_value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
         
         return res.success(return_value)
         
@@ -111,7 +113,7 @@ class Interpreter:
         if res.should_return(): return res
 
         context.symbol_table.set(var_name, value)
-        return res.success(value)
+        return res.success(None)
 
     def visit_BinOPNode(self, node, context):
         res = RTResult()
@@ -183,15 +185,15 @@ class Interpreter:
             if condition_val.isTrue():
                 expr_value = res.register(self.visit(expr, context))
                 if res.should_return(): return res
-                return res.success(Number.null if should_return_null else expr_value)
+                return res.success(None if should_return_null else expr_value)
 
         if node.else_case:
             expr, should_return_null = node.else_case
             expr_value = res.register(self.visit(expr, context))
             if res.should_return(): return res
-            return res.success(Number.null if should_return_null else expr_value)
+            return res.success(None if should_return_null else expr_value)
 
-        return res.success(Number.null)
+        return res.success(None)
 
     def visit_forNode(self, node, context):
         res = RTResult()
@@ -233,7 +235,7 @@ class Interpreter:
             elements.append(value)
 
         return res.success(
-            Number.null if node.should_return_null else
+            None if node.should_return_null else
             List(elements).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
 

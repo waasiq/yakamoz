@@ -7,7 +7,7 @@ import { InputContext } from './Context';
 const Input = () =>
 {
     const [ code , setCode ] = useContext(InputContext)
-    
+           
     return (
         <>
             <CodeMirror

@@ -40,7 +40,7 @@ class BuiltInFunction(BaseFunction):
     #* Execution Methods    
     def execute_print(self, exec_cntx):
         print(str(exec_cntx.symbol_table.get('value')))
-        return RTResult().success(Number.null)
+        return RTResult().success(None)
     execute_print.arg_names = ['value']
 
     def execute_input(self, exec_cntx):

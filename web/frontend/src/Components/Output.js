@@ -1,13 +1,16 @@
 
-import React, {useContext } from 'react'
+import React, {useContext, useState } from 'react'
 import { InputContext } from './Context'
 
 const Output = () => {
     const [code, setCode] = useContext(InputContext)
-    const [result, setResult] = useContext(InputContext)
+    const [result, setResult] = useState('')
+    const [error, setError] = useState('')
+
 
     const handleSubmit = async(e) => {
         e.preventDefault();
+
         try {
             let res = await fetch('http://127.0.0.1:5000/api/code', {
                 method: 'POST',
@@ -21,7 +24,7 @@ const Output = () => {
 
             let resJSON = await res.json();
             setResult(resJSON);
-            console.log('Output is: ' + resJSON);
+            console.log(result);
         }
         catch (error)
         {
@@ -30,8 +33,8 @@ const Output = () => {
     };
 
     return (
-        <> 
-            <h3> This is a header</h3>
+        <>  
+            <h2> { result } </h2> 
             <button type="button" onClick = { handleSubmit } > Submit</button>
         </>
     )

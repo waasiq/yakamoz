@@ -1,16 +1,9 @@
-oyleki a = 101
-oyleki b = 110 
+oyleki a = 10
 
-oyleki c = 'Hello World'
-
-if b == 10 ve a == 5 then
-    yazdir('Hello')
-else 
-    yazdir('Now is this working?')
-end
-
-yazdir(c)
-
-func powerToTwo(number)
-    return number ^ 2
+if a != 20 then 
+  'Fizz'
+elseif a == 0 then 
+  'Bizz' 
+else  
+   a
 end

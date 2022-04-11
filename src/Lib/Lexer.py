@@ -6,8 +6,8 @@ from Helpers.Context    import Context
 #* Main function import
 from Lib.Parser import Parser
 
-from Lib.Tokens                 import *
-from Lib.Interpreter            import *
+from Lib.Tokens             import *
+from Lib.Interpreter        import *
 from Objects.Numbers        import *
 from Objects.SymbolTable    import *
 from Errors.ErrHandler      import *
