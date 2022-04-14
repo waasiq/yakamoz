@@ -1,6 +1,5 @@
 import CodeMirror from '@uiw/react-codemirror';
 import '../css/CodeArea.css';
-//import { oneDark } from '@codemirror/theme-one-dark';
 
 import { useContext } from 'react';
 import { InputContext } from './Context';

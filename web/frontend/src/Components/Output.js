@@ -14,7 +14,7 @@ const Output = () => {
         e.preventDefault();
 
         try {
-            let res = await fetch('http://127.0.0.1:5000/api/code', {
+            let res = await fetch('https://yakamoz-lang.herokuapp.com/api/code', {
                 method: 'POST',
                 headers: {
                     'Content-type':'application/json'
