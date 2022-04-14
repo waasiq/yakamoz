@@ -1,13 +1,11 @@
-import './css/App.css';
-
 import CodeArea from './Components/CodeArea';
 import Docs from "./Components/Doc";
+import Examples from './Components/Examples';
 
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
 } from "react-router-dom";
 
 function App() {    
@@ -16,7 +14,8 @@ function App() {
         <Router>
               <Routes>   
                 <Route path='/' element={<CodeArea/>} />               
-                <Route path='/docs' element={<Docs/>} />                
+                <Route path='/docs' element={<Docs/>} />        
+                <Route path='/examples' element={<Examples/>} />        
               </Routes>
         </Router>
     </>

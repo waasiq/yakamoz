@@ -78,7 +78,11 @@ class Interpreter:
     def visit_funcDefNode(self, node, context):
         res = RTResult()
 
-        func_name = node.func_name_token.value if node.func_name_token.value else None
+        if node.func_name_token != None:
+            func_name = node.func_name_token.value 
+        else: 
+            func_name = None
+            
         body_node = node.body_node
         args_names = [arg_name.value for arg_name in node.arg_name_tokens]
         func_value = Function(func_name, args_names, body_node, node.should_auto_return).set_context(context).set_pos(node.pos_start, node.pos_end)

@@ -8,8 +8,6 @@ import '../css/CodeArea.css';
 
 import {InputProvider} from './Context';
 
-//TODO: Code the left part of the form first and then the right part later on thats
-//TODO: thats all there is on the UI side. Look into the python backend then :) 
 
 const CodeArea = () => {
     return (

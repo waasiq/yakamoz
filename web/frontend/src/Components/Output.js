@@ -2,6 +2,8 @@
 import React, {useContext, useState } from 'react'
 import { InputContext } from './Context'
 
+import Button from '@mui/material/Button';
+
 const Output = () => {
     const [code, setCode] = useContext(InputContext)
     const [result, setResult] = useState('')
@@ -23,8 +25,8 @@ const Output = () => {
             });
 
             let resJSON = await res.json();
-            setResult(resJSON);
-            console.log(result);
+            let resArrays  = resJSON.split('\n')
+            setResult(resArrays);
         }
         catch (error)
         {
@@ -34,8 +36,15 @@ const Output = () => {
 
     return (
         <>  
-            <h2> { result } </h2> 
-            <button type="button" onClick = { handleSubmit } > Submit</button>
+            <Button className = 'mui-btn' variant="contained" onClick= { handleSubmit }>Run</Button>
+            <br />
+
+            { 
+                Object.values(result).map((val, index) => {
+                    return <h3 key= {index}>{val}</h3>
+               })
+            }
+            
         </>
     )
 }

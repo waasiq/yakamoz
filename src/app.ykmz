@@ -1,9 +1,22 @@
-oyleki a = 10
 
-if a != 20 then 
-  'Fizz'
-elseif a == 0 then 
-  'Bizz' 
-else  
-   a
-end
+
+yazdir('Celsius den farenHeit secmek icin 1, farenheit den Celsius secmek icin 2 giriniz:')
+oyleki secenek = input_int()
+
+eger secenek == 1 ise 
+    yazdir('Celsius degerini giriniz:')
+    oyleki celsius = input_int()
+    oyleki farenheit = celsius * 1.8 + 32
+    yazdir('Farenheit degeri: ')
+    yazdir(farenheit)
+yoksaeger secenek == 2 ise 
+    yazdir('Farenheit degerini giriniz:')
+    oyleki farenheit = input_int()
+    oyleki celsius = (farenheit - 32) / 1.8
+    yazdir('Celsius degeri: ')
+    yazdir(celsius)
+son
+
+oyleki celsiusDerece = 10
+oyleki farenHeit = (celsiusDerece * 9/5) + 32
+yazdir(farenHeit)

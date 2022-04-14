@@ -34,4 +34,4 @@ def api_route():
         return jsonify(resultStr)
     else: 
         print(error)
-        return jsonify('Error in program')
+        return jsonify(error)

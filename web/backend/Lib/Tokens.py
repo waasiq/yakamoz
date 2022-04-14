@@ -45,6 +45,7 @@ TOK_RETURN      = 'RETURN'
 TOK_CONTINUE    = 'CONTINUE'
 
 TOK_END         = 'END'
+TOK_SON         = 'SON'
 
 #! Dict for the Operator
 OP_TOK_TAG = {
@@ -68,20 +69,24 @@ KEYWORDS = [
     've',
     'veya',
 
-    'if',
-    'then',
-    'elseif',
-    'else',
+    'eger',
+    'yoksaeger',
+    'yoksa',
+    'ise',
 
     'for',
-    'to',
-    'step',
+    'den',
+    'kadar',
+    'adim',
+
     'while',
-    'func', 
-    'return',
-    'continue',
+    'fonk', 
+    'dondur',
+    'devam',
     'break',
-    'end'
+    
+    'son',
+    'sonra'
 ]
 
 class Token:

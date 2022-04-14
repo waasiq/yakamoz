@@ -1,0 +1,31 @@
+.docs{
+    margin:2% 15%;
+}
+
+.code-area{
+    outline: 2px solid #e6e6e6;
+    border-radius: 8px;
+    line-height: 25px;
+
+    margin:20px 12%;
+    padding: 5px 5px;
+   
+    background-color: #4A5568;
+    color:#dfe2e8;
+}
+
+.code-area > p {
+    padding: 5px 17%;
+}
+
+.code-area > ul > li {
+    list-style:inside;
+}
+
+.expr{
+    padding-left:25px;
+}
+
+.big-example { 
+    padding: 20px 0px;
+}

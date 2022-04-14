@@ -1,4 +1,5 @@
 import CodeMirror from '@uiw/react-codemirror';
+import '../css/CodeArea.css';
 //import { oneDark } from '@codemirror/theme-one-dark';
 
 import { useContext } from 'react';
@@ -14,6 +15,7 @@ const Input = () =>
                 value="yazdir('Hello World')"
                 height="630px"
                 width="100%"
+                className='input-area'
                 onChange={ setCode }
             />
            

@@ -9,10 +9,19 @@
 .input {
     width:50%;
     float:left;
+    outline: 2px solid #e6e6e6;
 }
 
 .output {
     float: right;
-    width: 50%;
+    width: 48%;
+    padding-right:10px;
 }
+
+
+.input-area{
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+}
+
 

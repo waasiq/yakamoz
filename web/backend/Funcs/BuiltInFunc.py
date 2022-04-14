@@ -222,5 +222,7 @@ BuiltInFunction.append      = BuiltInFunction("append")
 BuiltInFunction.pop         = BuiltInFunction("pop")
 BuiltInFunction.run         = BuiltInFunction("run")
 BuiltInFunction.getElement  = BuiltInFunction('getElement')
+BuiltInFunction.len  = BuiltInFunction('len')
+
 
     

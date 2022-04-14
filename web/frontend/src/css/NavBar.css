@@ -2,17 +2,16 @@
     display:flex;
     justify-content:space-between;
     align-items:center;
-
 }
 
 img{
-    height: 50px;
+    height: 60px;
+    clip-path: circle(35% at 50% 50%);    
 }
 
 .nav-links{
     display:flex;
     justify-content:space-between;
-
     padding:15px 15px;
 }
 
@@ -25,4 +24,9 @@ img{
     
     transition:all 0.3s ease-in-out;
     /* Can add on hover transition*/
+}
+
+.name{
+    padding-left:18%;
+    font-style: italic;  
 }

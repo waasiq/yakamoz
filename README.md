@@ -61,14 +61,18 @@ style = 'width:100%; height:400px;'>
 
 <h3> Motivation </h3>
 
-<p> The motivation behind building yakamoz was to teach my roomate programming and also learn how interpreted languages work behind the scene. Yakamoz is in it's early stage so there are still a lot of things to implement and a lot of errors to correct. </p>
+<p> The motivation behind building yakamoz was to teach my roomate programming and also learn how interpreted languages work behind the scene. It may also be used to teach children about programming in Turkish schools. Yakamoz is in it's early stage so there are still a lot of things to implement and a lot of errors to correct. Due to my full time studies I can't dedicate a lot of time to it's development, please feel free to contact me or fork this project for help. </p>
 </section>
 
 
 <section id = 'built-with'>
 <h3> Built With </h3>
-
+<p>Source code for Yakamoz is solely built with Python: </p>
 <li><a href='https://www.python.org/'>Python</a></li>
+
+<p>Online compiler is built with: </p>
+<li><a href='https://flask.palletsprojects.com/en/2.0.x/'>Flask</a></li>
+<li><a href='https://reactjs.org/'>React JS</a></li>
 
 </section>
 
@@ -79,11 +83,15 @@ style = 'width:100%; height:400px;'>
 <section id = 'prerequisites'>
 <h3> Prerequisites </h3>
 <li><a href='https://www.python.org/'>Python</a></li>
+<li><a href='https://flask.palletsprojects.com/en/2.0.x/'>Flask</a></li>
+<li><a href='https://reactjs.org/'>React JS</a></li>
 </section>
 
 <section id = 'installation'>
 
 ### Installation
+
+For running offline version of compiler: 
 
 1. Clone the repo
    ```sh
@@ -93,7 +101,7 @@ style = 'width:100%; height:400px;'>
     ```
     python ./src/shell.py
     ```
-3. Use  the run command inside to read from a file.
+3. Use  the run command inside to read from a file or write the code.
    ```
     yakamoz >>> run('app.ykmz')
    ```
@@ -172,7 +180,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
   <section id = 'logical-operators'>
    
   #### Logical Operators
-  not, and, or operetors are available .value 0 ,empty String ,empty List corresponds to "FALSE" any other value corresponds to "TRUE" .  
+  not, and, or operetors are available .
     
     Syntax :
     
@@ -185,8 +193,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
   <section id = 'if-statements'>
 
   #### if-elseif- else statements
-    
-    Syntax :  if condition then expression elseif condition then expression else expression
+     Syntax :  if condition then expression elseif condition then expression else expression
   </section>
 
   <section id = 'for-loop'>
@@ -233,25 +240,16 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
  </section>
 
- <section id = 'examples'>
-   
-## Code Examples
-  
 
-  ### Hello World    
-    yazdir('Hello World')
-  
-  #### Going to add more examples in a separate page
-
-<examples>
 
 <section id = 'future-plans'>
 
 ## Future Plans
   * Making an online compiler for the language
+  * Add code documentation
 
 </section>
 
 
 [license-logo]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/waasiq/zeta-basic/blob/main/LICENSE
+[license-url]: https://github.com/waasiq/yakamoz/blob/main/LICENSE

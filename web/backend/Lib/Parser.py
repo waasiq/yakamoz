@@ -31,7 +31,7 @@ class Parser:
        if not res.error and self.currTok.type != TOK_EOF:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                'Expected an operator '
+                'Operator Beklemektedir '
             ))
        return res
 
@@ -77,7 +77,7 @@ class Parser:
         res = ParseResult()
         pos_start = self.currTok.pos_start.copy()
 
-        if self.currTok.matches(TOK_KEYWORD, 'return'):
+        if self.currTok.matches(TOK_KEYWORD, 'dondur'):
             res.register_advancement()
             self.advance()
 
@@ -85,7 +85,7 @@ class Parser:
             if not expr:  self.reverse(res.to_reverse_count)
             return res.success(ReturnNode(expr, pos_start, self.currTok.pos_start.copy()))
 
-        if self.currTok.matches(TOK_KEYWORD, 'continue'):
+        if self.currTok.matches(TOK_KEYWORD, 'devam'):
             res.register_advancement()
             self.advance()
             return res.success(ContinueNode(pos_start,self.currTok.pos_start.copy()))
@@ -99,7 +99,7 @@ class Parser:
         if res.error: 
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'oyleki', 'if', 'for', 'while', 'fun', int, float, identifier, '+', '-', '(', '[' or 'not'"
+                "'oyleki', 'eger', 'for', 'while', 'fonk', int, float, degisken, '+', '-', '(', '[' veya 'yoket'"
             ))
 
         return res.success(expr)
@@ -141,7 +141,7 @@ class Parser:
         if res.error: 
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                'Expected int, float, identifier,+, - ,( , YOKET '
+                'int, float, degisken ,+, - ,( , yoket beklemektedir'
             ))
 
         return res.success(node)
@@ -161,22 +161,25 @@ class Parser:
         
         return self.power()
 
+    #!------------------------------------------------------------------------------------------
+    #! IF Expressions parsing starts here
+    #!------------------------------------------------------------------------------------------
     def if_expr(self):
         res = ParseResult()
-        all_cases = res.register(self.if_expr_cases('if'))
+        all_cases = res.register(self.if_expr_cases('eger'))
         if res.error: return res
         cases, else_case = all_cases
         return res.success(ifNode(cases, else_case))
     
     
     def if_expr_b(self):
-        return self.if_expr_cases('elseif')
+        return self.if_expr_cases('yoksaeger')
     
     def if_expr_c(self):
         res = ParseResult()
         else_case = None
         
-        if self.currTok.matches(TOK_KEYWORD, 'else'):
+        if self.currTok.matches(TOK_KEYWORD, 'yoksa'):
             res.register_advancement()
             self.advance()
             
@@ -190,13 +193,13 @@ class Parser:
                 else_case = (statements, True)
 
                
-                if self.currTok.matches(TOK_KEYWORD, 'end'):
+                if self.currTok.matches(TOK_KEYWORD, 'son'):
                     res.register_advancement()
                     self.advance()
                 else:
                     return res.failure(InvalidSyntaxError(
                         self.currTok.pos_start, self.currTok.pos_end,
-                        "Expected 'end'"
+                        "'son' kelime beklemektedir"
                     ))
             else:
                 expr = res.register(self.statement())
@@ -209,7 +212,7 @@ class Parser:
         res = ParseResult()
         cases, else_case = [], None
 
-        if self.currTok.matches(TOK_KEYWORD, 'elseif'):
+        if self.currTok.matches(TOK_KEYWORD, 'yoksaeger'):
             all_cases = res.register(self.if_expr_b())
             if res.error: return res
             cases, else_case = all_cases
@@ -227,7 +230,7 @@ class Parser:
         if not self.currTok.matches(TOK_KEYWORD, case_keyword):
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                f"Expected '{case_keyword}'"
+                f"'{case_keyword}' kelime beklemektedir"
             ))
 
         res.register_advancement()
@@ -236,10 +239,10 @@ class Parser:
         condition = res.register(self.expr())
         if res.error: return res
 
-        if not self.currTok.matches(TOK_KEYWORD, 'then'):
+        if not self.currTok.matches(TOK_KEYWORD, 'ise'):
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                f"Expected 'then'"
+                f"'ise' kelime beklemektedir"
             ))
 
         res.register_advancement()
@@ -253,7 +256,7 @@ class Parser:
             if res.error: return res
             cases.append((condition, statements, True))
 
-            if self.currTok.matches(TOK_KEYWORD, 'end'):
+            if self.currTok.matches(TOK_KEYWORD, 'son'):
                 res.register_advancement()
                 self.advance()
             else:
@@ -273,17 +276,16 @@ class Parser:
         
         return res.success((cases, else_case))
 
-
-
-
-    #! While expression
+    #!------------------------------------------------------------------------------------------
+    #! While expression parsing starts here
+    #!------------------------------------------------------------------------------------------
     def while_expr(self):
         res = ParseResult()
         
         if self.currTok.matches(TOK_KEYWORD, 'while') == False:
             return res.failure(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'while' keyword"
+                "'while' kelime beklemektedir"
             )
         
         res.register_advancement()
@@ -292,10 +294,10 @@ class Parser:
         condition = res.register(self.expr())
         if res.error: return res
 
-        if self.currTok.matches(TOK_KEYWORD, 'then') == False:
+        if self.currTok.matches(TOK_KEYWORD, 'ise') == False:
             return res.failure(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'then' keyword"
+                "Expected 'ise' keyword"
             )
         
         res.register_advancement()
@@ -308,10 +310,10 @@ class Parser:
             body = res.register(self.statements())
             if res.error: return res
 
-            if not self.currTok.matches(TOK_KEYWORD, 'end'):
+            if not self.currTok.matches(TOK_KEYWORD, 'son'):
                 return res.failure(InvalidSyntaxError(
                      self.currTok.pos_start, self.currTok.pos_end,
-                    f"Expected 'end'"
+                    f"Expected 'son'"
                 ))
 
             res.register_advancement()
@@ -324,7 +326,9 @@ class Parser:
 
         return res.success(whileNode(condition, body, False))
         
-    #! For expression
+    #!------------------------------------------------------------------------------------------
+    #! For expression parsing starts here
+    #!------------------------------------------------------------------------------------------
     def for_expr(self):
         res = ParseResult()
 
@@ -360,10 +364,10 @@ class Parser:
         first_expr = res.register(self.expr())
         if res.error: return res
 
-        if self.currTok.matches(TOK_KEYWORD, 'to') == False:
+        if self.currTok.matches(TOK_KEYWORD, 'den') == False:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'to' keyword"
+                "Expected 'den' keyword"
             ))
 
         res.register_advancement()
@@ -373,7 +377,7 @@ class Parser:
         if res.error: return res
 
 
-        if self.currTok.matches(TOK_KEYWORD, 'step'):
+        if self.currTok.matches(TOK_KEYWORD, 'adim'):
             res.register_advancement()
             self.advance()
 
@@ -382,10 +386,10 @@ class Parser:
         else:
             step_value = None
 
-        if self.currTok.matches(TOK_KEYWORD, 'then') == False:
+        if self.currTok.matches(TOK_KEYWORD, 'kadar') == False:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'then' keyword"
+                "'kadar' kelimesi beklemektedir"
             ))
 
         res.register_advancement()
@@ -398,10 +402,10 @@ class Parser:
         body = res.register(self.statements())
         if res.error: return res
 
-        if not self.currTok.matches(TOK_KEYWORD, 'end'):
+        if not self.currTok.matches(TOK_KEYWORD, 'son'):
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                f"Expected 'end'"
+                f"'son' kelimesi beklemektedir"
             ))
 
         res.register_advancement()
@@ -409,14 +413,16 @@ class Parser:
 
         return res.success(forNode(var_name, first_expr, second_expr, step_value, body, True))
 
-    #!Function define parser
+    #!------------------------------------------------------------------------------------------
+    #! Fucntion expression parsing starts here
+    #!------------------------------------------------------------------------------------------
     def func_def(self):
         res = ParseResult()
 
-        if self.currTok.matches(TOK_KEYWORD, 'func') == False:
+        if self.currTok.matches(TOK_KEYWORD, 'fonk') == False:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'func' keyword"
+                "'fonk' kelime beklemektedir"
             ))
         
         res.register_advancement()
@@ -431,18 +437,13 @@ class Parser:
            if self.currTok.type != TOK_LBRACKET:
                return res.failure(InvalidSyntaxError(
                    self.currTok.pos_start, self.currTok.pos_end, 
-                   'Expected Left Bracket'
+                   "'(' beklemektedir"
                ))
         else:
             var_name_token = None
 
             res.register_advancement()
             self.advance()
-            if self.currTok.type != TOK_LBRACKET:
-               return res.failure(InvalidSyntaxError(
-                   self.currTok.pos_start, self.currTok.pos_end, 
-                   'Expected ('
-               ))
 
         res.register_advancement()
         self.advance()
@@ -462,7 +463,7 @@ class Parser:
                 if self.currTok.type != TOK_IDENTIFIER:
                     return res.failure(InvalidSyntaxError(
                         self.currTok.pos_start, self.currTok.pos_end,
-                        'Expected an identifier'
+                        'Degisken beklemektedir'
                     ))
 
                 arg_name_tokens.append(self.currTok)
@@ -472,13 +473,13 @@ class Parser:
             if self.currTok.type != TOK_RBRACKET:
                 return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
-                    'Expected ) identifier'
+                    "')' beklemektedir"
                 ))
         else:
             if self.currTok.type != TOK_RBRACKET:
                 return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
-                    'Expected ) identifier'
+                    "')' beklemektedir"
                 ))
     
         res.register_advancement()
@@ -502,7 +503,7 @@ class Parser:
         if self.currTok.type != TOK_NEWLINE:
             return res.failure(InvalidSyntaxError(
             self.currTok.pos_start, self.currTok.pos_end,
-            f"Expected '->' or NEWLINE"
+            f"'->' veya yeni satir beklemektedir"
         ))
         
         res.register_advancement()
@@ -511,10 +512,10 @@ class Parser:
         body = res.register(self.statements())
         if res.error: return res
 
-        if not self.currTok.matches(TOK_KEYWORD, 'end'):
+        if self.currTok.matches(TOK_KEYWORD, 'son') == False:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                f"Expected 'end'"
+                f"'son' kelime beklemektedir"
         ))
 
         res.register_advancement()
@@ -527,6 +528,9 @@ class Parser:
             False
         ))
 
+    #!------------------------------------------------------------------------------------------
+    #! List expression parsing starts here
+    #!------------------------------------------------------------------------------------------
     def list_expr(self):
         res = ParseResult()
         elements = []
@@ -535,7 +539,7 @@ class Parser:
         if self.currTok.type != TOK_LSQUARE:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected '['"
+                "'[' beklemektedir"
             ))
 
         res.register_advancement()
@@ -558,7 +562,7 @@ class Parser:
             if self.currTok.type != TOK_RSQUARE:
                 return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
-                    "Expected ',' or ']'"
+                    "',' ve ya ']' beklemektedir"
                 ))
         
         res.register_advancement()
@@ -596,13 +600,13 @@ class Parser:
             else:
                 return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
-                    "Expected ')'"
+                    "')' beklemektedir"
                 ))
         elif token.type == TOK_LSQUARE:
             list_expr = res.register(self.list_expr())
             if res.error: return res
             return res.success(list_expr)
-        elif token.matches(TOK_KEYWORD, 'if'):
+        elif token.matches(TOK_KEYWORD, 'eger'):
             if_expr = res.register(self.if_expr())
             if res.error: return res
             return res.success(if_expr)           
@@ -614,7 +618,7 @@ class Parser:
             while_expr = res.register(self.while_expr())
             if res.error: return res
             return res.success(while_expr)
-        elif token.matches(TOK_KEYWORD, 'func'):
+        elif token.matches(TOK_KEYWORD, 'fonk'):
             func_def = res.register(self.func_def())
             if res.error: return res
             return res.success(func_def)
@@ -622,7 +626,7 @@ class Parser:
         return res.failure(InvalidSyntaxError(
             token.pos_start,
             token.pos_end ,
-            'Expected int, float, identifier,+, - or ( '
+            'int, float, degisken,+, - or ( beklemektedir'
         ))
 
     #* Call function
@@ -645,7 +649,7 @@ class Parser:
                 if res.error:
                     return res.failure(InvalidSyntaxError(
 						self.currTok.pos_start, self.currTok.pos_end,
-						"Expected ')', 'oyleki', 'if', 'for', 'while', 'func', int, float, identifier, '+', '-', '(' or 'NOT'"
+						"')', 'oyleki', 'eger', 'for', 'while', 'fonk', int, float, identifier, '+', '-', '(' veya 'yok' beklemektedir'"
 					))
                 
                 while self.currTok.type == TOK_COMMA: 
@@ -658,7 +662,7 @@ class Parser:
                 if self.currTok.type != TOK_RBRACKET:
                     return res.failure(InvalidSyntaxError(
 						self.currTok.pos_start, self.currTok.pos_end,
-						f"Expected ',' or ')'"
+						f"',' ve ya ')' beklemektedir"
 					))
                 res.register_advancement()
                 self.advance()
@@ -687,7 +691,7 @@ class Parser:
             if self.currTok.type != TOK_IDENTIFIER:
                 return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
-                    'Expected an identifier'   
+                    'Degisken Beklemektedir'   
                 ))
             
             varName = self.currTok
@@ -697,7 +701,7 @@ class Parser:
             if self.currTok.type != TOK_EQUAL:
                 return res.failure(InvalidSyntaxError(
                     self.currTok.pos_start, self.currTok.pos_end,
-                    'Expected ='   
+                    '= bekleniyor'   
                 ))
             
             res.register_advancement()
@@ -713,7 +717,7 @@ class Parser:
         if res.error:
             return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'oyleki', int, float, identifier, '+', '-' or '('"
+                "'oyleki', int, float, identifier, '+', '-' ve ya '(' beklemektedir"
             ))
 
         return res.success(node)

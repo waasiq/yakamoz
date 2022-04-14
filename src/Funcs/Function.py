@@ -1,6 +1,5 @@
 
 from Funcs.BaseFunc import BaseFunction
-from Wrappers.RTResult import RTResult
 from Objects.Numbers import Number
 
 class Function(BaseFunction):

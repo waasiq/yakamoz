@@ -198,7 +198,7 @@ global_symbol_table.set("ekle",  BuiltInFunction.append)
 global_symbol_table.set("cikar", BuiltInFunction.pop)
 
 #global_symbol_table.set('getElement', BuiltInFunction.getElement)
-#global_symbol_table.set('len', BuiltInFunction.len)
+global_symbol_table.set('uzunluk', BuiltInFunction.len)
 global_symbol_table.set('run', BuiltInFunction.run)
 
 
