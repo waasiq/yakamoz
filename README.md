@@ -1,5 +1,4 @@
-<img src = 'https://socialify.git.ci/waasiq/yakamoz/image?font=Raleway&forks=1&logo=https%3A%2F%2Fi0.wp.com%2Fstorage.googleapis.com%2Fstateless-tasmaniangeographic%2F2015%2F05%2FSea-Sparkle-3-By-Leena-Wisby.jpg%3Ffit%3D1024%252C631%26ssl%3D1&name=1&owner=1&pattern=Solid&stargazers=1&theme=Dark' 
-style = 'width:100%; height:400px;'>
+<img src="https://socialify.git.ci/waasiq/yakamoz/image?font=Source%20Code%20Pro&forks=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fwaasiq%2Fyakamoz%2Fmain%2Fdocs%2Fyakamoz-logo-modified.png&name=1&owner=1&pattern=Solid&pulls=1&stargazers=1&theme=Dark" alt="yakamoz" width="100%;" height="400px;" />
 
 <br />
 <br />
@@ -8,6 +7,7 @@ style = 'width:100%; height:400px;'>
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
+  <summary>
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
@@ -26,28 +26,12 @@ style = 'width:100%; height:400px;'>
       </ul>
     </li>
     <li><a href="#license">License</a></li>
-    <li><a href="#links">Links</a></li>
     <li>
       <a href="#documentation">Documentation</a>
-      <ul>
-        <li><a href="#data-types">Data Types</a></li>
-        <li><a href="#variables">Variables</a></li>
-        <li><a href="#arithmetic-operators">Arithmetic Operators</a></li>
-        <li><a href="#comparison-operators">Comparison Operators</a></li>
-        <li><a href="#logical-operators">Logical Operators</a></li>
-        <li><a href="#conditional-statements">Conditional Statements</a></li>
-        <li><a href="#for-loop">For Loop</a></li>
-        <li><a href="#while-loop">While Loop</a></li>
-        <li><a href="#functions">Built-In Functions</a></li>
-        <li><a href="#functions">Functions</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#examples">Code Examples</a>
     </li>
     <li><a href="#future-plans">Future Plans</a></li>
   </ol>
-
+  </summary>
 
 <!-- ABOUT THE PROJECT -->
 <section id = 'about-the-project'>
@@ -105,6 +89,24 @@ For running offline version of compiler:
    ```
     yakamoz >>> run('app.ykmz')
    ```
+
+For running online version of compiler: 
+
+1. Clone the repo
+   ```sh
+     git clone https://github.com/waasiq/yakamoz.git
+   ```
+2. Install the python dependencies using pip in web/backend.
+    ```
+      pip install -r requirements.txt
+    ```
+3. Install the npm  dependencies using npm in web/frontend.
+    ```
+      npm install 
+    ```
+4. Run both the backend and frontend and do change the API link in package.json as well as Output   Component to https://127.0.0.1:5000/api/code
+
+
 </section>
 
 
@@ -115,138 +117,16 @@ For running offline version of compiler:
 [![MIT License][license-logo]][license-url]<br>
 Distributed under the MIT License. See `LICENSE` for more information.
 
-<!-- CONTACT -->
-<section id = 'links'>
-
-## Links
-* Project repo: [https://github.com/waasiq/yakamoz.git](https://github.com/waasiq/yakamoz.git)
-</section> 
-
 <section id = 'documentation'>
 
 ## Documentation
 
- <section id = 'data-types'>
-
-  #### Data types
-
-  - Data types in Yakamoz for now are:
-    * Number (int, float)
-    * String
-    * List
-  
-  <section id = 'variables'>
-
-  #### Variables
-
-    Variable syntax:
-        oyleki variable_name  = expression
-    
-    Example: 
-        oyleki x = 99 
-  </section>
-
-  <section id = 'arithmetic-operators'>
-
-  #### Arithmetic Operators 
-  Following operations have been added in yakamoz: 
-
-    Syntax :
-      Addition          : (Number + Number) or (String + String) or (List + Number -> appends to list)
-      Subtraction       : (Number - Number)
-      Mutliplication    : (Number * Number) or (List * List) or (String * Number) 
-      Division          : (Number / Number) or (List / Number -> Gives index of list)
-      Mod               : (Number % Number)
-      Power of          : (Number ^ Number)
-  
-  </section>
-    
-  <section id = 'comparison-operators'>
-
-  #### Comparison Operators 
-  Following comparison operators have been added in yakamoz:
-    Syntax :
-    
-    (==) : (dataype == datatype)
-    (!=) : (datatype != datatype)
-    
-    (<) : (Number < Number) 
-    (>) : (Number > Number) 
-    (<=) : (Number <= Number)
-    (>=) : (Number >= Number)
-
-  </section>
-
-  <section id = 'logical-operators'>
-   
-  #### Logical Operators
-  not, and, or operetors are available .
-    
-    Syntax :
-    
-    yoket          : (! expression)
-    and (ve)       : expression ve expression
-    or  (veya)     : expression veya expression
-    
-  </section>
-
-  <section id = 'if-statements'>
-
-  #### if-elseif- else statements
-     Syntax :  if condition then expression elseif condition then expression else expression
-  </section>
-
-  <section id = 'for-loop'>
-
-  #### For Loop 
-  for loop syntax:    
-    Syntax :
-
-    for count_variable = start_value to end_value then expression 
-    for count_variable = start_value to end_value step step_value then expression 
-  </section>
-
-  <section id = 'while-loop'>
-
-  #### While Loop
-   
-    Syntax : while condition then expression ;
-  </section>
-
-  <section id = 'built-in-functions'>
-
-  #### Built-in Functions 
-  Following are the built-In functions which have been added to yakamoz:
-
-    Syntax:
-
-    yazdir(expression) 
-    ekle(list, number)   -> Adds a number to a list
-    isDatatype(datatype) -> returns true if a datatype is a datatype 
-    input(string)        -> takes string input from user 
-    input_int(int)       -> takes int input from user
- </section>
-
- <section id = 'functions'>
-
- #### Functions
- Functions are defined using func keyword followed by the name. Syntax is as follows:
- ```
-  func function_name(parameter_list)
-    expressions
-    return expression
-  end 
- ```
-
- </section>
-
-
+<p>Documentation can be found on the <a href='https://yakamoz.netlify.app/'>website</a>. Click on Docs to access Documentation there.</p>
 
 <section id = 'future-plans'>
 
 ## Future Plans
-  * Making an online compiler for the language
-  * Add code documentation
+  * Improve the documentation and improve the compiler.
 
 </section>
 

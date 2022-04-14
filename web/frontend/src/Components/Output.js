@@ -12,7 +12,6 @@ const Output = () => {
 
     const handleSubmit = async(e) => {
         e.preventDefault();
-
         try {
             let res = await fetch('https://yakamoz-lang.herokuapp.com/api/code', {
                 method: 'POST',

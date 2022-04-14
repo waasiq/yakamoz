@@ -187,7 +187,7 @@ const Docs = () => {
                             <strong>fonk</strong> function_name(parameter_list) <br />
                                 <span className='expr'> expressions       </span> <br />
                                 <span className='expr'> <strong>dondur</strong> expression </span> <br />
-                            <strong>end</strong> 
+                            <strong>son</strong> 
                         </p>
                     </div>
         

@@ -6,6 +6,7 @@ app = Flask(__name__, static_folder='../frontend/')
 CORS(app)
 
 @app.route('/')
+@cross_origin()
 def HelloWorld():
     return 'Main Page'
 
