@@ -10,26 +10,26 @@
   <summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#about-the-project">Projeyi hakkında</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
+        <li><a href="#built-with">Kullanılmış Teknoloji</a></li>
       </ul>
       <ul>
-        <li><a href="#motivation">Motivation</a></li>
+        <li><a href="#motivation">Motivasyon</a></li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#getting-started">Başla</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#prerequisites">Gereken Teknolojiler</a></li>
+        <li><a href="#installation">Indirmeli Şeyler </a></li>
       </ul>
     </li>
     <li><a href="#license">License</a></li>
     <li>
-      <a href="#documentation">Documentation</a>
+      <a href="#documentation">Docs</a>
     </li>
-    <li><a href="#future-plans">Future Plans</a></li>
+    <li><a href="#future-plans">Gelecekte Amaçlar</a></li>
   </ol>
   </summary>
 
@@ -37,24 +37,24 @@
 <section id = 'about-the-project'>
 <h2> About The Project </h2>
 
-<p> Yakamoz is an small scale interpreted language that was mainly built in older to help Turkish speakers learn programming on a relative easier scale. </p>
+<p> Yakamoz Türkçe arayüzlü yorumlanmış bir programlama dilidir. </p>
 
 </section>
 
 <section id = 'motivation'>
 
-<h3> Motivation </h3>
+<h3> Motivasyon </h3>
 
-<p> The motivation behind building yakamoz was to teach my roomate programming and also learn how interpreted languages work behind the scene. It may also be used to teach children about programming in Turkish schools. Yakamoz is in it's early stage so there are still a lot of things to implement and a lot of errors to correct. Due to my full time studies I can't dedicate a lot of time to it's development, please feel free to contact me or fork this project for help. </p>
+<p>  Oda arkadaşımla programla öğretmek amacıyla başladığımız bu proje ilk başlarda basitti ama ilerledikçe karmaşık bir hal aldı. Genel hatlarıyla kolay bir programlama dili olduğu için çocuklara kodlama öğretilirken kullanılabilir. Değişkenler, döngüler ve fonksiyonları kapsayan bu dil küçük ölçekli programlar için çalışır. </p>
 </section>
 
 
 <section id = 'built-with'>
-<h3> Built With </h3>
-<p>Source code for Yakamoz is solely built with Python: </p>
+<h3> Kullanılmış Teknolojiler </h3>
+<p>Source kodu python ile yazıldı: </p>
 <li><a href='https://www.python.org/'>Python</a></li>
 
-<p>Online compiler is built with: </p>
+<p>Web tarayıcı Flask ve ReactJS ile yazılmış </p>
 <li><a href='https://flask.palletsprojects.com/en/2.0.x/'>Flask</a></li>
 <li><a href='https://reactjs.org/'>React JS</a></li>
 
@@ -65,7 +65,7 @@
 
 ## Getting Started
 <section id = 'prerequisites'>
-<h3> Prerequisites </h3>
+<h3> Gereken Teknolojiler </h3>
 <li><a href='https://www.python.org/'>Python</a></li>
 <li><a href='https://flask.palletsprojects.com/en/2.0.x/'>Flask</a></li>
 <li><a href='https://reactjs.org/'>React JS</a></li>
@@ -75,24 +75,24 @@
 
 ### Installation
 
-For running offline version of compiler: 
+Offline versyon için: 
 
-1. Clone the repo
+1. Repoyu klon et
    ```sh
    git clone https://github.com/waasiq/yakamoz.git
    ```
-2. Run the shell.py file inside the ./src folder.
+2. ./src dosyasinda shell.py çalıştır.
     ```
     python ./src/shell.py
     ```
-3. Use  the run command inside to read from a file or write the code.
+3. Dosya'dan okumak için dosyaadı yazıp run kullanabilirsin.
    ```
     yakamoz >>> run('app.ykmz')
    ```
 
-For running online version of compiler: 
+Online versyon için: 
 
-1. Clone the repo
+1. Repoyu klon etmek için
    ```sh
      git clone https://github.com/waasiq/yakamoz.git
    ```
@@ -121,13 +121,12 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Documentation
 
-<p>Documentation can be found on the <a href='https://yakamoz.netlify.app/'>website</a>. Click on Docs to access Documentation there.</p>
+<p>Documentation burada bulunmaktadır <a href='https://yakamoz.netlify.app/'>website</a>. Docs'a tıklayıp erişebilirsiniz.</p>
 
 <section id = 'future-plans'>
 
 ## Future Plans
-  * Improve the documentation and improve the compiler.
-  * Add Turkish language support
+  * Projeyi geliştirmek.
 
 </section>
 

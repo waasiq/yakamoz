@@ -3,71 +3,72 @@ import NavBar from './NavBar'
 
 import '../css/Docs.css'
 
-const Docs = () => {
+const DocsTR = () => {
     return (
         <>
         <NavBar /> 
         <div className = 'docs'>
-            <h1> Documentation </h1>
+            <h1> Dokümantasyon </h1>
             
             <section id = 'about-the-project'>
-                <h2> About The Project </h2>
-                <p> Yakamoz is an small scale interpreted language that was mainly built in older to help Turkish speakers learn programming on a relative easier scale. </p>
+                <h2> Proje Hakkında </h2>
+                <p> Yakamoz Türkçe arayüzlü yorumlanmış bir programlama dilidir. </p>
             </section>
 
             <section id = 'motivation'>
-                <h3> Motivation </h3>
+                <h3> Motivasyon </h3>
                 <p> 
-                    The motivation behind building yakamoz was to teach my roomate programming and also learn how interpreted languages work behind the scene.
-                    Yakamoz can also be used to teach children in Turkish schools about basics of programming.
-                    Yakamoz is in it's early stage so there are still a lot of things to implement and a lot of errors to correct. 
+                Oda arkadaşımla programla öğretmek amacıyla başladığımız bu proje ilk başlarda basitti ama 
+                ilerledikçe karmaşık bir hal aldı. Genel hatlarıyla kolay bir programlama dili olduğu için 
+                çocuklara kodlama öğretilirken kullanılabilir. Değişkenler, döngüler ve fonksiyonları kapsayan 
+                bu dil küçük ölçekli programlar için çalışır. 
                 </p>
             </section>
            
             <section id = 'installation'>
-                    <h3> Installation of project on local machine</h3>
+                    <h3> Indirmeli Teknolojiler</h3>
                     <p> 
-                        To install the project and run it on your own local development environment you can do the following:
+                       Projeyı çalıştırmak için aşağıda verilmiş Teknolojiler gerekmektedir.
                     </p>
 
                     <div className="code-area">
                         <ul>
-                            <li>  Clone the repo git clone https://github.com/waasiq/yakamoz.git</li>
+                            <li> Repoyu klon et: https://github.com/waasiq/yakamoz.git</li>
                             <li>
-                                Run the shell.py file inside the ./src folder. python ./src/shell.py
+                                ./src/ dosyasında shell.py python dosyayı çalıştır.
                             </li>
-                            <li> Use the run command inside to read from a file.  </li>
+                            <li> Run komut ile dosyalardan veri okunabilir.  </li>
                             <li> yakamoz {'>>>'} run(' folder_name.ykmz') </li>
-                            <li> Alternatively code can also be run inside the shell. </li>
+                            <li> Diğer türlü CLI'da kod da yazılabiir. </li>
                         </ul>
                     </div>
                     
                 </section>
 
-                <h2>Documentation</h2>
+                <h2>Dokümantasyon</h2>
 
                 <section id = 'data-types'>
 
            
-                <h3> Data types </h3>
+                <h3> Data türler </h3>
 
                 Data types in Yakamoz for now are:
                     <ul>
-                        <li>Number (int, float)</li>
+                        <li>Numarayalar (int, float)</li>
                         <li>String</li>
-                        <li>List</li>
+                        <li>Liste</li>
                     </ul>
       
                 </section>
 
                 <section id = 'variables'>
-                    <h3> Variables </h3>
+                    <h3> Değişkenler </h3>
                     <div className="code-area">
                         <p>                        
-                            Variable syntax:
+                                Değişkenler syntax:
                                 oyleki variable_name  = expression
                             <br />
-                            Example: <br />
+                            Örnek: <br />
                                 oyleki x = 99 <br />
                                 oyleki adi = 'Waasiq Masood' <br />
                                 oyleki list = [1,2,3,4,5] <br />
@@ -77,24 +78,24 @@ const Docs = () => {
 
             <section id = 'arithmetic-operators'>
                <h3>
-                    Arithmetic Operators 
+                    Matematiksal öperatör
                </h3>
-               Following operations have been added in yakamoz: 
+               Aşağıda verilmiş: 
                <div className="code-area">
                    <ul>
-                        <li>Addition          : (Number + Number) or (String + String) or (List + Number {'->'} appends to list) </li>
-                        <li>Subtraction       : (Number - Number)</li>
-                        <li>Multiplication    : (Number * Number)  or (List * List) or (String * Number) </li>
-                        <li>Division          : (Number / Number) or (List / Number - Gives index of list)</li> 
-                        <li>Mod               : (Number % Number) </li>
-                        <li>Power of          : (Number ^ Number) </li>
+                        <li>Toplama        : (Number + Number) or (String + String) or (List + Number {'->'} appends to list) </li>
+                        <li>Çıkarma        : (Number - Number)</li>
+                        <li>Çarpma         : (Number * Number)  or (List * List) or (String * Number) </li>
+                        <li>Bölme          : (Number / Number) or (List / Number - Gives index of list)</li> 
+                        <li>Mod            : (Number % Number) </li>
+                        <li>Küvvet         : (Number ^ Number) </li>
                     </ul>                   
                 </div>    
 
             </section>
         
             <section id = 'comparison-operators'>
-                <h3> Comparison Operators </h3>
+                <h3> Eşitleme Öperators </h3>
                 <div className="code-area">
                     <ul>
                         <li>(==) : (dataype == datatype)</li>
@@ -109,7 +110,7 @@ const Docs = () => {
 
             <section id = 'logical-operators'>
     
-                <h3>Logical Operators</h3>
+                <h3>Lojik Öperatör</h3>
                 not, and, or operetors are available in yakamoz.
                 <div className="code-area">
                     <ul>
@@ -122,7 +123,7 @@ const Docs = () => {
 
             <section id = 'if-statements'>
                 <h3> if - elseif- else statements </h3>
-                <p>If statements in yakamoz are as shown below: </p>
+                <p>If else statements: </p>
                 <div className="code-area">
                     <p>
                         <strong>eger </strong>condition <strong>sonra</strong> expression <strong>yoksaeger</strong> condition <strong>ise</strong> expression <strong>yoksa</strong> expression <br />
@@ -156,13 +157,13 @@ const Docs = () => {
 
                 <div className="code-area">
                     <p>
-                       <strong>while</strong> count_variable expression <strong>ise</strong> expression <strong>son</strong> <br />
+                    <strong>while</strong> count_variable expression <strong>ise</strong> expression <strong>son</strong> <br />
                     </p>
                 </div>
             </section>
 
             <section id = 'built-in-functions'>
-                <h3> Built-in Functions </h3>
+                <h3> Hazır fonksiyonlar </h3>
                              
                     Following are the built-In functions which have been added to yakamoz:
 
@@ -179,9 +180,9 @@ const Docs = () => {
             </section>
 
             <section id = 'functions'>
-                <h3> Functions</h3>
+                <h3> Fonksiyonlar</h3>
                             
-                    Functions are defined using func keyword followed by the name. Syntax is as follows:
+                    Fonksiyonlaın syntax aşağıda verilmiş:
                     <div className="code-area">
                         <p>
                             <strong>fonk</strong> function_name(parameter_list) <br />
@@ -198,4 +199,4 @@ const Docs = () => {
     )
 }
 
-export default Docs
+export default DocsTR

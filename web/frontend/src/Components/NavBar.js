@@ -22,6 +22,7 @@ const NavBar = () => {
                 <Link to="/" className="link">Home</Link>
                 <Link to="/docs" className="link">Docs</Link>
                 <Link to="/examples" className="link">Examples</Link>
+                <Link to="/docstr" className="link">Doküman </Link>
                 <a href='https://github.com/waasiq/yakamoz' target='_blank' className="link">Code</a>                
             </div>  
         </div>

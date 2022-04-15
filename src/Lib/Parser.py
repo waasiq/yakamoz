@@ -283,10 +283,10 @@ class Parser:
         res = ParseResult()
         
         if self.currTok.matches(TOK_KEYWORD, 'while') == False:
-            return res.failure(
+            return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
                 "'while' kelime beklemektedir"
-            )
+            ))
         
         res.register_advancement()
         self.advance()
@@ -295,10 +295,10 @@ class Parser:
         if res.error: return res
 
         if self.currTok.matches(TOK_KEYWORD, 'ise') == False:
-            return res.failure(
+            return res.failure(InvalidSyntaxError(
                 self.currTok.pos_start, self.currTok.pos_end,
-                "Expected 'ise' keyword"
-            )
+                f"Expected 'ise' keyword"
+            ))
         
         res.register_advancement()
         self.advance()
