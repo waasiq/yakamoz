@@ -127,7 +127,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Future Plans
   * Improve the documentation and improve the compiler.
-  * Add Turkish language support
 
 </section>
 
